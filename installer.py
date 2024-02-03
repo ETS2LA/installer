@@ -114,7 +114,7 @@ def AskForPath():
 
 def OpenFolderAndCloseApp(path):
     os.system("start " + path)
-    exit()
+    quit()
    
 def Install(path, mirror):
     global installButton
@@ -126,16 +126,16 @@ def Install(path, mirror):
         installButton.config(text="Cloning from Github...")
         root.update()
         os.system("git clone -b installer --single-branch https://github.com/Tumppi066/Euro-Truck-Simulator-2-Lane-Assist.git " + path)
-        installButton.config(text="Open app installer")
-        installButton.config(command=lambda: OpenFolderAndCloseApp(path + "\\menu.bat"))
+        installButton.config(text="Open folder (open the menu.bat file in there)")
+        installButton.config(command=lambda: OpenFolderAndCloseApp(path))
         installButton.config(style="Accent.TButton")
         messagebox.showinfo("Installation", "The installation is complete.")
     if mirror == "Sourceforge":
         installButton.config(text="Cloning from Sourceforge...")
         root.update()
         os.system("git clone -b installer --single-branch https://git.code.sf.net/p/eurotrucksimulator2-laneassist/code " + path)
-        installButton.config(text="Open app installer")
-        installButton.config(command=lambda: OpenFolderAndCloseApp(path + "\\menu.bat"))
+        installButton.config(text="Open folder (open the menu.bat file in there)")
+        installButton.config(command=lambda: OpenFolderAndCloseApp(path))
         installButton.config(style="Accent.TButton")
         messagebox.showinfo("Installation", "The installation is complete.")
    
