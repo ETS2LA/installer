@@ -114,7 +114,7 @@ def AskForPath():
 
 def OpenFolderAndCloseApp(path):
     os.system("start " + path)
-    quit()
+    sys.exit()
    
 def Install(path, mirror):
     global installButton
