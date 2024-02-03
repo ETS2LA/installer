@@ -112,9 +112,8 @@ def AskForPath():
     from tkinter import filedialog
     return filedialog.askdirectory()
 
-def OpenFolderAndCloseApp(path):
+def OpenFolder(path):
     os.system("start " + path)
-    sys.exit()
    
 def Install(path, mirror):
     global installButton
@@ -127,7 +126,7 @@ def Install(path, mirror):
         root.update()
         os.system("git clone -b installer --single-branch https://github.com/Tumppi066/Euro-Truck-Simulator-2-Lane-Assist.git " + path)
         installButton.config(text="Open folder (open the menu.bat file in there)")
-        installButton.config(command=lambda: OpenFolderAndCloseApp(path))
+        installButton.config(command=lambda: OpenFolder(path))
         installButton.config(style="Accent.TButton")
         messagebox.showinfo("Installation", "The installation is complete.")
     if mirror == "Sourceforge":
@@ -135,7 +134,7 @@ def Install(path, mirror):
         root.update()
         os.system("git clone -b installer --single-branch https://git.code.sf.net/p/eurotrucksimulator2-laneassist/code " + path)
         installButton.config(text="Open folder (open the menu.bat file in there)")
-        installButton.config(command=lambda: OpenFolderAndCloseApp(path))
+        installButton.config(command=lambda: OpenFolder(path))
         installButton.config(style="Accent.TButton")
         messagebox.showinfo("Installation", "The installation is complete.")
    
