@@ -21,7 +21,14 @@ def nl():
     console.print()
 def replace_input(text, default=None):
     default = text + default if default else ""
-    response = console.input(text)
+    first = True
+    response = None
+    while response not in ["y", "n", "", "Y", "N"]:
+        if not first:
+            sys.stdout.write("\033[F") # Move cursor up
+            sys.stdout.write("\033[K")
+        response = console.input(text)
+        first = False
     if response == "": 
         sys.stdout.write("\033[F") # Move cursor up
         sys.stdout.write("\033[K")
@@ -50,7 +57,7 @@ NODE_VER = os.popen("node -v").read().strip()
 RAM = psutil.virtual_memory().total / 1024 / 1024 / 1024
 CORES = psutil.cpu_count()
 GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
-SOURCEFORGE_URL = "ssh://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
+SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
 CLONED = os.path.exists(DIR + "\\app")
 
 
@@ -82,7 +89,7 @@ if CLONED:
     sys.exit(0)
 
 fg("┏ Let's ask some questions to get you started.")
-IS_IN_LIMITED_COUNTRY = replace_input("┣ Are you in a [i]country[/i] where you can't access [blue][bold]GitHub[/bold][/blue]? (y/N) > ", default="n") == "n"
+CAN_ACCESS_GITHUB = replace_input("┣ Can you access [blue][bold]GitHub[/bold][/blue] in your [i]country[/i]? (Y/n) > ", default="y") == "y"
 HAS_NVIDIA = replace_input("┣ Do you have an [bold][green]NVIDIA[/green][/bold] GPU? (y/N) > ", default="n") == "y"
 CUDA = False
 if HAS_NVIDIA: CUDA = replace_input("┣ NVIDIA version for better performance? It requires 2gb more space. (Y/n) > ", default="y") != "n"
@@ -90,9 +97,9 @@ if replace_input("┣ ETS2LA will be installed to [bold]" + DIR + "\\app[/bold].
 wait("┗ ", 2)
 
 bg("\n┏ Starting install...")
-bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if IS_IN_LIMITED_COUNTRY else '[blue][bold]GitHub[/bold][/blue]'}...\n")
+bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_ACCESS_GITHUB else '[blue][bold]GitHub[/bold][/blue]'}...\n")
 
-if IS_IN_LIMITED_COUNTRY:
+if not CAN_ACCESS_GITHUB:
     os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
 else:
     os.system(f"git clone {GITHUB_URL} {DIR}\\app")
