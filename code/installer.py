@@ -51,6 +51,8 @@ def start_app():
     os.system("python main.py")
 # endregion
 
+# region Variables
+
 DIR =  sys.path[0]
 VER = sys.version.split(" ")[0]
 NODE_VER = os.popen("node -v").read().strip()
@@ -60,6 +62,9 @@ GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
 CLONED = os.path.exists(DIR + "\\app")
 
+# endregion
+
+# region Stats
 
 bg("┏ Hi, I'm the installer!")
 
@@ -77,6 +82,10 @@ if CORES < 4: err("You have less than 4 CPU cores. This may cause problems as th
 elif CORES < 6: warn("You have less than 6 CPU cores. You should be fine... I think.")
 else: bg("[bold]OK[/bold]")
 
+# endregion
+
+# region Installed check
+
 nl()
 
 bg("┏ Checking if the app is already cloned...")
@@ -87,6 +96,10 @@ nl()
 if CLONED:
     start_app()
     sys.exit(0)
+    
+# endregion
+
+# region Install questions
 
 fg("┏ Let's ask some questions to get you started.")
 CAN_ACCESS_GITHUB = replace_input("┣ Can you access [blue][bold]GitHub[/bold][/blue] in your [i]country[/i]? (Y/n) > ", default="y") == "y"
@@ -95,6 +108,10 @@ CUDA = False
 if HAS_NVIDIA: CUDA = replace_input("┣ NVIDIA version for better performance? It requires 2gb more space. (Y/n) > ", default="y") != "n"
 if replace_input("┣ ETS2LA will be installed to [bold]" + DIR + "\\app[/bold]. Continue? (Y/n) > ", default="y") == "n": sys.exit(1)
 wait("┗ ", 2)
+
+# endregion
+
+# region Install
 
 bg("\n┏ Starting install...")
 bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_ACCESS_GITHUB else '[blue][bold]GitHub[/bold][/blue]'}...\n")
@@ -122,6 +139,8 @@ bg("\n┏ Dependencies done, continuing...")
 bg("┗ Setting up node...\n")
 
 os.system(f"cd {DIR}\\app\\frontend && npm install")
+
+# endregion
 
 fg("\n┏ [bold]Install done![/bold]")
 if replace_input("┗ Do you want to start the app now? (Y/n) > ", default="y") == "n": sys.exit(0)
