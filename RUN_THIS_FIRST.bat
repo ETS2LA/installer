@@ -27,19 +27,23 @@ exit
 
 :errorNoNPM
 echo - Error^: NPM not installed
+echo ? Continuing will try and install Node automatically, CTRL+C to cancel
+pause
+python helpers/download_node.py
 echo.
-echo Please install node.js, it is used to run the frontend. 
-echo https://nodejs.org/en/download/prebuilt-installer
-echo.
+echo Please restart the script to check if Node was installed correctly.
+echo If it's not working then you can install it manually from https://nodejs.org/en
 pause
 exit
 
 :errorNoGit
 echo - Error^: Git not installed
+echo ? Continuing will try and install Git automatically, CTRL+C to cancel
+pause
+python helpers/download_git.py
 echo.
-echo Please install git, it is used to clone the repository.
-echo https://git-scm.com/downloads
-echo.
+echo Please restart the script to check if Git was installed correctly.
+echo If it's not working then you can install it manually from https://git-scm.com/downloads
 pause
 exit
 

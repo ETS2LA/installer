@@ -28,7 +28,7 @@ pip install -q -r code/requirements.txt
 echo + Done
 
 echo Running the installer / app...
-timeout /t 0 /nobreak >nul
+timeout /t 1 /nobreak >nul
 cls
 
 cd code
