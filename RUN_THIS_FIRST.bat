@@ -20,7 +20,8 @@ goto:end
 echo - Error^: Python not installed
 echo.
 echo Please install either python 3.10 or 3.11 and make sure it is set as the default python installation.
-echo https://www.python.org/downloads/release/python-3119/
+echo https://www.python.org/downloads/release/python-3119/  -  Scroll down and download "Windows installer (64-bit)"
+echo Make sure to toggle "Add Python to PATH" during installation.
 echo.
 pause
 exit

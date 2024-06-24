@@ -119,10 +119,10 @@ if CLONED:
 # region Install questions
 
 fg("┏ Let's ask some questions to get you started.")
-CAN_ACCESS_GITHUB = replace_input("┣ 1 - Can you access [blue][bold]GitHub[/bold][/blue] in your [i]country[/i]? (Y/n) > ", default="y") == "y"
+CAN_ACCESS_GITHUB = replace_input("┣ 1 - Can you access [link https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist][blue][bold]GitHub[/bold][/blue][/link https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist] in your [i]country[/i]? (Y/n) > ", default="y") == "y"
 HAS_NVIDIA = replace_input("┣ 2 - Do you have an [bold][green]NVIDIA[/green][/bold] GPU? (y/N) > ", default="n") == "y"
 CUDA = False
-if HAS_NVIDIA: CUDA = replace_input("┣ 3 - NVIDIA version for better performance? It requires 2gb more space. (Y/n) > ", default="y") == "y"
+if HAS_NVIDIA: CUDA = replace_input("┣ 3 - [bold][green]NVIDIA[/green][/bold] version for better performance? It requires [yellow]2gb[/yellow] more space. (Y/n) > ", default="y") == "y"
 if replace_input("┣ [bold]OK[/bold] - ETS2LA will be installed to [bold]" + DIR + "\\app[/bold]. Continue? (Y/n) > ", default="y") == "n": sys.exit(1)
 wait("┗ ", 2)
 
