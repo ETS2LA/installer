@@ -102,17 +102,27 @@ bg("┗ " + ("It is - starting the app." if CLONED else "It's not - starting the
 nl()
 
 if CLONED:
+    start_time = time.time()
     try:
         start_app()
+        warn("\n[dim]┏ ETS2LA has been closed.[/dim]")
+        warn("[dim]┗ You can check the logs above for information or errors and warnings.[/dim]")
+        console.input("[dim]Press enter to exit [/dim]")
         sys.exit(0)
-    except:
-        err("┏ Something went wrong when starting.")
-        fg("[red]┗ Removing the app and starting the install now.[/red]")
-        try:
-            shutil.rmtree(DIR + "\\app")
-        except:
-            err("\n┏ Couldn't remove the app folder. Please delete [code][bold]" + DIR + "\\app[/bold][/code] manually and restart the installer.")
-            sys.exit(1)
+    except Exception as e:
+        if time.time() - start_time < 5:
+            err("┏ Something went wrong when starting.")
+            fg("[red]┗ Removing the app and starting the install now.[/red]")
+            try:
+                shutil.rmtree(DIR + "\\app")
+            except:
+                err("\n┏ Couldn't remove the app folder. Please delete [code][bold]" + DIR + "\\app[/bold][/code] manually and restart the installer.")
+                sys.exit(1)
+        else:
+            warn("\n[dim]┏ ETS2LA has been closed.[/dim]")
+            warn("[dim]┗ You can check the logs above for information or errors and warnings.[/dim]")
+            console.input("[dim]Press enter to exit [/dim]")
+            sys.exit(0)
     
 # endregion
 
