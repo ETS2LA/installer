@@ -19,7 +19,6 @@ IF NOT EXIST venv (
 echo Activating virtual environment...
 cd venv\Scripts
 call activate
-source activate
 cd ..
 cd ..
 echo + Done
