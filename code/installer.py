@@ -49,8 +49,12 @@ def wait(prefix, seconds, type = "line"):
                 time.sleep(0.1)
     print(f'\r{prefix}Please wait... Done.')
 def start_app():
-    os.chdir(DIR + "\\app")
-    os.system("python main.py")
+    if LINUX:
+        os.chdir(DIR + "/app")
+        os.system("python main.py")
+    else:
+        os.chdir(DIR + "\\app")
+        os.system("python main.py")
 # endregion
 
 # region Variables
@@ -63,7 +67,11 @@ CORES = psutil.cpu_count()
 SPACE = psutil.disk_usage(DIR).free / 1024 / 1024 / 1024
 GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
-CLONED = os.path.exists(DIR + "\\app")
+LINUX = os.path.exists("/etc/os-release")
+if LINUX:
+    CLONED = os.path.exists(DIR + "/app")
+else:
+    CLONED = os.path.exists(DIR + "\\app")
 
 # endregion
 
@@ -144,28 +152,55 @@ bg("\n┏ Starting install...")
 bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_ACCESS_GITHUB else '[blue][bold]GitHub[/bold][/blue]'}...\n")
 
 if not CAN_ACCESS_GITHUB:
-    os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
+    if LINUX:
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}/app")
+    else:
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
 else:
-    os.system(f"git clone {GITHUB_URL} {DIR}\\app")
+    if LINUX:
+        os.system(f"git clone {GITHUB_URL} {DIR}/app")
+    else:
+        os.system(f"git clone {GITHUB_URL} {DIR}\\app")
     
 # Switch to the rewrite branch
-os.system(f"cd {DIR}\\app && git checkout rewrite")
+if LINUX:
+    os.system(f"cd {DIR}/app && git checkout rewrite")
+else:
+    os.system(f"cd {DIR}\\app && git checkout rewrite")
     
 bg("\n┏ Git done, checking...")
 
-if "requirements.txt" not in os.listdir(DIR + "\\app"):
-    err("┗ Something went wrong. The app wasn't cloned properly.")
-    input("Press enter to exit.")
+if LINUX:
+    if "requirements.txt" not in os.listdir(DIR + "/app"):
+        err("┗ Something went wrong. The app wasn't cloned properly.")
+        input("Press enter to exit.")
+else:
+    if "requirements.txt" not in os.listdir(DIR + "\\app"):
+        err("┗ Something went wrong. The app wasn't cloned properly.")
+        input("Press enter to exit.")
 
 bg("┣ Cloned successfully, continuing...")
 bg("┗ Installing python dependencies...\n")
 
-os.system(f"pip install -r {DIR}\\app\\requirements.txt")
+if LINUX:
+    with open(f"{DIR}/app/requirements.txt", "r+") as f:
+        lines = f.readlines()
+        f.seek(0)
+        for line in lines:
+            if "pywin32" not in line:
+                f.write(line)
+        f.truncate()
+    os.system(f"pip install -r {DIR}/app/requirements.txt")
+else:
+    os.system(f"pip install -r {DIR}\\app\\requirements.txt")
 
 bg("\n┏ Dependencies done, continuing...")
 bg("┗ Setting up node...\n")
 
-os.system(f"cd {DIR}\\app\\frontend && npm install")
+if LINUX:
+    os.system(f"cd {DIR}/app/frontend && npm install")
+else:
+    os.system(f"cd {DIR}\\app\\frontend && npm install")
 
 # endregion
 
