@@ -202,6 +202,13 @@ if LINUX:
 else:
     os.system(f"cd {DIR}\\app\\frontend && npm install")
 
+#Install spesfic deps for linux
+
+if LINUX:
+    os.system("pip3 install pyqt5 pyqtwebengine")
+    os.system("pip3 install pywebview")
+    os.system("pip3 install pywebview[qt]")
+    
 # endregion
 
 # region CUDA
