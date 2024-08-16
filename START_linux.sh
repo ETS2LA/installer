@@ -28,4 +28,4 @@ echo "Running the installer / app..."
 sleep 1
 
 cd code
-python installer.py
+sudo python installer.py
