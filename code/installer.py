@@ -205,9 +205,88 @@ else:
 #Install spesfic deps for linux
 
 if LINUX:
+    bg("\nInstalling spesific dependencies for linux...")
+
     os.system("pip3 install pyqt5 pyqtwebengine")
     os.system("pip3 install pywebview")
     os.system("pip3 install pywebview[qt]")
+
+    #Make app folder a user folder
+    bg("\nMaking app folder a user folder...")
+
+    os.system(f"sudo chmod -R 777 {DIR}/app")
+
+    #Check if tinkery is installed
+
+    bg("\nChecking if tinker is installed...")
+
+
+    try:
+        import tkinter as tk
+        bg("┏ Tinker is installed")
+        bg("┗ Continuing...")
+    except:
+        bg("┏ Tinker is not installed")
+        bg("┗ Installing...")
+
+        #Detect Distro 
+
+        print("Detecting distro...")
+
+        try:
+            distro = os.popen("lsb_release -si").read().lower().strip()
+        except KeyError:
+            distro = "unknown"
+
+        print("Detected distro: " + distro)
+        if distro != "unknown":
+            checkinput = ""
+            while checkinput != "y" and checkinput != "n":
+                checkinput = input("Is this correct? (y/n) ")
+
+            if checkinput == "y":
+                pass
+            elif checkinput == "n":
+                print("That's not very good. Please pay close attention to the next prompt.")
+
+        if distro == "linuxmint" or distro == "ubuntu" or distro == "debian":
+            checkinput = ""
+            while checkinput != "y" and checkinput != "n":
+                checkinput = input("Would you like to install tkinter via apt? (y/n) ")
+            if checkinput == "y":
+                print("Installing tkinter via apt...")
+                os.system("sudo apt update")
+                os.system("sudo apt install python3-tk -y")
+            elif checkinput == "n":
+                print("Please install tkinter manually and try again.")
+
+        if distro == "arch" or distro == "manjaro":
+            checkinput = ""
+            while checkinput != "y" and checkinput != "n":
+                checkinput = input("Would you like to install tkinter via pacman? (y/n) ")
+            if checkinput == "y":
+                print("Installing tkinter via pacman...")
+                os.system("sudo pacman -S tk")
+            elif checkinput == "n":
+                print("Please install tkinter manually and try again.")
+
+        if distro == "unknown":
+            print("Distro not detected. Please install tkinter manually and try again.")
+
+        if distro != "unknown" and distro != "linuxmint" and distro != "ubuntu" and distro != "debian" and distro != "arch" and distro != "manjaro":
+            print("Your distro is not supported. Please install tkinter manually and try again.")
+            quit()
+
+        #Check if tkinter is installed
+
+        print("Checking if tkinter is installed...")
+
+        try:
+            import tkinter as tk
+            print("Tkinter is installed!")
+        except:
+            print("It seems that tkinter failed to install. Please install tkinter manually and try again.")
+
     
 # endregion
 
