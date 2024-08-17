@@ -290,6 +290,63 @@ if LINUX:
     
 # endregion
 
+# region Install Dlls
+if LINUX:
+    bg("\n┏ Installing DLLs...")
+    bg("┗ I don't know what to write here so and most people don't even read this so..................\n")
+
+    #Check default debian folder for euro truck simulator 2
+    if os.path.exists("/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/Euro Truck Simulator 2/bin/linux_x64"):
+        gamefolder = "/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/Euro Truck Simulator 2/bin/linux_x64"
+    else:
+        fg("Failed to find Euro Truck Simulator folder. Please open steam and copy the game path and paste it below. or if the game is not installed leave blank and press enter")
+        gamefolder = input()
+        gamefolder = gamefolder.replace(" ", "")
+
+    if gamefolder != "":
+
+        if os.path.exists(gamefolder):
+            if not os.path.exists(gamefolder + "/plugins"):
+                folder = os.path.join(gamefolder, "plugins")
+                os.system("mkdir -p \"" + folder + "\"")
+            
+            #Copy dlls
+            try:
+                os.system("cp -r ../helpers/dlls/Linux/* \"" + folder + "\"")
+            except:
+                print("Failed to copy dlls. Please copy them manually and try again.")
+
+    if os.path.exists("/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/American Truck Simulator/bin/linux_x64"):
+        gamefolder = "/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/American Truck Simulator/bin/linux_x64"
+    else:
+        fg("Failed to find American Truck Simulator folder. Please open steam and copy the game path and paste it below. or if the game is not installed leave blank and press enter")
+        gamefolder = input()
+        gamefolder = gamefolder.replace(" ", "")
+
+    if gamefolder != "":
+
+        if os.path.exists(gamefolder):
+            if not os.path.exists(gamefolder + "/plugins"):
+                folder = os.path.join(gamefolder, "plugins")
+                os.system("mkdir -p \"" + folder + "\"")
+            
+            #Copy dlls
+            try:
+                os.system("cp -r ../helpers/dlls/Linux/* \"" + folder + "\"")
+            except:
+                print("Failed to copy dlls. Please copy them manually and try again.")
+
+    
+
+    
+
+        
+else:
+    bg("\n┏ Installing DLLs...")
+    bg("┗ This may take a while...\n")
+
+    print("So......")
+    print("I'm not going to install the dlls for you because I'm on linux but need something to put here so who ever is reading this could you do this for me or just wait a little?.")
 # region CUDA
 
 if CUDA:
