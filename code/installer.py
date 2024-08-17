@@ -345,8 +345,52 @@ else:
     bg("\n┏ Installing DLLs...")
     bg("┗ This may take a while...\n")
 
-    print("So......")
-    print("I'm not going to install the dlls for you because I'm on linux but need something to put here so who ever is reading this could you do this for me or just wait a little?.")
+    print("\nInstalling ETS2/ATS plugin...")
+
+    import ..helpers.steamParser as steamParser
+
+    # Find the SCS games
+    scsGames = steamParser.FindSCSGames()
+
+    # Create a string to display the found games
+    foundString = "Found the following games automatically:\n"
+    for game in scsGames:
+        foundString += game + ": True\n"
+
+    print(foundString)
+
+    # Ask the user for the additional directory
+    additionalDir = input("Enter the path to the additional directory (leave blank if not found): ")
+    if additionalDir != "":
+        # Check the base.scs file exists in that directory
+        if os.path.isfile(os.path.join(additionalDir, "base.scs")):
+            print("Base.scs found in that directory!")
+            scsGames += [additionalDir]
+        else:
+            print("Base.scs not found in that directory. Skipping...")
+
+    # Copy the plugin to the correct folder
+    successfullyInstalled = []
+    for game in scsGames:
+        print(game)
+        # Check if the plugins folder exists
+        if not os.path.isdir(os.path.join(game, "bin", "win_x64", "plugins")):
+            os.makedirs(os.path.join(game, "bin", "win_x64", "plugins"))
+        
+        # Copy the plugin to the folder
+        try:
+            # Copy the API
+            shutil.copy(os.path.join(os.path.dirname(__file__), "..", "helpers", "dlls", "Windows", "scs-telemetry.dll"), os.path.join(game, "bin", "win_x64", "plugins"))
+            # Copy the controller SDK
+            shutil.copy(os.path.join(os.path.dirname(__file__), "..", "helpers", "dlls", "Windows", "scs-telemetry.dll"), os.path.join(game, "bin", "win_x64", "plugins"))
+            successfullyInstalled.append(game)
+        except:
+            print("Failed to copy the plugin to " + os.path.join(game, "bin", "win_x64", "plugins"))
+    
+    if successfullyInstalled != []:
+        print("Successfully installed at least some plugin(s)!")
+    else:
+        print("Failed to install the plugin(s)!")
 # region CUDA
 
 if CUDA:
