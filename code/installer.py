@@ -49,8 +49,12 @@ def wait(prefix, seconds, type = "line"):
                 time.sleep(0.1)
     print(f'\r{prefix}Please wait... Done.')
 def start_app():
-    os.chdir(DIR + "\\app")
-    os.system("python main.py")
+    if LINUX:
+        os.chdir(DIR + "/app")
+        os.system("python main.py")
+    else:
+        os.chdir(DIR + "\\app")
+        os.system("python main.py")
 # endregion
 
 # region Variables
@@ -63,7 +67,11 @@ CORES = psutil.cpu_count()
 SPACE = psutil.disk_usage(DIR).free / 1024 / 1024 / 1024
 GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
-CLONED = os.path.exists(DIR + "\\app")
+LINUX = os.path.exists("/etc/os-release")
+if LINUX:
+    CLONED = os.path.exists(DIR + "/app")
+else:
+    CLONED = os.path.exists(DIR + "\\app")
 
 # endregion
 
@@ -144,31 +152,245 @@ bg("\n┏ Starting install...")
 bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_ACCESS_GITHUB else '[blue][bold]GitHub[/bold][/blue]'}...\n")
 
 if not CAN_ACCESS_GITHUB:
-    os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
+    if LINUX:
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}/app")
+    else:
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
 else:
-    os.system(f"git clone {GITHUB_URL} {DIR}\\app")
+    if LINUX:
+        os.system(f"git clone {GITHUB_URL} {DIR}/app")
+    else:
+        os.system(f"git clone {GITHUB_URL} {DIR}\\app")
     
 # Switch to the rewrite branch
-os.system(f"cd {DIR}\\app && git checkout rewrite")
+if LINUX:
+    os.system(f"cd {DIR}/app && git checkout rewrite")
+else:
+    os.system(f"cd {DIR}\\app && git checkout rewrite")
     
 bg("\n┏ Git done, checking...")
 
-if "requirements.txt" not in os.listdir(DIR + "\\app"):
-    err("┗ Something went wrong. The app wasn't cloned properly.")
-    input("Press enter to exit.")
+if LINUX:
+    if "requirements.txt" not in os.listdir(DIR + "/app"):
+        err("┗ Something went wrong. The app wasn't cloned properly.")
+        input("Press enter to exit.")
+else:
+    if "requirements.txt" not in os.listdir(DIR + "\\app"):
+        err("┗ Something went wrong. The app wasn't cloned properly.")
+        input("Press enter to exit.")
 
 bg("┣ Cloned successfully, continuing...")
 bg("┗ Installing python dependencies...\n")
 
-os.system(f"pip install -r {DIR}\\app\\requirements.txt")
+if LINUX:
+    with open(f"{DIR}/app/requirements.txt", "r+") as f:
+        lines = f.readlines()
+        f.seek(0)
+        for line in lines:
+            if "pywin32" not in line:
+                f.write(line)
+        f.truncate()
+    os.system(f"pip install -r {DIR}/app/requirements.txt")
+else:
+    os.system(f"pip install -r {DIR}\\app\\requirements.txt")
 
 bg("\n┏ Dependencies done, continuing...")
 bg("┗ Setting up node...\n")
 
-os.system(f"cd {DIR}\\app\\frontend && npm install")
+if LINUX:
+    os.system(f"cd {DIR}/app/frontend && npm install")
+else:
+    os.system(f"cd {DIR}\\app\\frontend && npm install")
 
+#Install spesfic deps for linux
+
+if LINUX:
+    bg("\nInstalling spesific dependencies for linux...")
+
+    os.system("pip3 install pyqt5 pyqtwebengine")
+    os.system("pip3 install pywebview")
+    os.system("pip3 install pywebview[qt]")
+
+    #Make app folder a user folder
+    bg("\nMaking app folder a user folder...")
+
+    os.system(f"sudo chmod -R 777 {DIR}/app")
+
+    #Check if tinkery is installed
+
+    bg("\nChecking if tinker is installed...")
+
+
+    try:
+        import tkinter as tk
+        bg("┏ Tinker is installed")
+        bg("┗ Continuing...")
+    except:
+        bg("┏ Tinker is not installed")
+        bg("┗ Installing...")
+
+        #Detect Distro 
+
+        print("Detecting distro...")
+
+        try:
+            distro = os.popen("lsb_release -si").read().lower().strip()
+        except KeyError:
+            distro = "unknown"
+
+        print("Detected distro: " + distro)
+        if distro != "unknown":
+            checkinput = ""
+            while checkinput != "y" and checkinput != "n":
+                checkinput = input("Is this correct? (y/n) ")
+
+            if checkinput == "y":
+                pass
+            elif checkinput == "n":
+                print("That's not very good. Please pay close attention to the next prompt.")
+
+        if distro == "linuxmint" or distro == "ubuntu" or distro == "debian":
+            checkinput = ""
+            while checkinput != "y" and checkinput != "n":
+                checkinput = input("Would you like to install tkinter via apt? (y/n) ")
+            if checkinput == "y":
+                print("Installing tkinter via apt...")
+                os.system("sudo apt update")
+                os.system("sudo apt install python3-tk -y")
+            elif checkinput == "n":
+                print("Please install tkinter manually and try again.")
+
+        if distro == "arch" or distro == "manjaro":
+            checkinput = ""
+            while checkinput != "y" and checkinput != "n":
+                checkinput = input("Would you like to install tkinter via pacman? (y/n) ")
+            if checkinput == "y":
+                print("Installing tkinter via pacman...")
+                os.system("sudo pacman -S tk")
+            elif checkinput == "n":
+                print("Please install tkinter manually and try again.")
+
+        if distro == "unknown":
+            print("Distro not detected. Please install tkinter manually and try again.")
+
+        if distro != "unknown" and distro != "linuxmint" and distro != "ubuntu" and distro != "debian" and distro != "arch" and distro != "manjaro":
+            print("Your distro is not supported. Please install tkinter manually and try again.")
+            quit()
+
+        #Check if tkinter is installed
+
+        print("Checking if tkinter is installed...")
+
+        try:
+            import tkinter as tk
+            print("Tkinter is installed!")
+        except:
+            print("It seems that tkinter failed to install. Please install tkinter manually and try again.")
+
+    
 # endregion
 
+# region Install Dlls
+if LINUX:
+    bg("\n┏ Installing DLLs...")
+    bg("┗ I don't know what to write here so and most people don't even read this so..................\n")
+
+    #Check default debian folder for euro truck simulator 2
+    if os.path.exists("/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/Euro Truck Simulator 2/bin/linux_x64"):
+        gamefolder = "/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/Euro Truck Simulator 2/bin/linux_x64"
+    else:
+        fg("Failed to find Euro Truck Simulator folder. Please open steam and copy the game path and paste it below. or if the game is not installed leave blank and press enter")
+        gamefolder = input()
+        gamefolder = gamefolder.replace(" ", "")
+
+    if gamefolder != "":
+
+        if os.path.exists(gamefolder):
+            if not os.path.exists(gamefolder + "/plugins"):
+                folder = os.path.join(gamefolder, "plugins")
+                os.system("mkdir -p \"" + folder + "\"")
+            
+            #Copy dlls
+            try:
+                os.system("cp -r ../helpers/dlls/Linux/* \"" + folder + "\"")
+            except:
+                print("Failed to copy dlls. Please copy them manually and try again.")
+
+    if os.path.exists("/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/American Truck Simulator/bin/linux_x64"):
+        gamefolder = "/home/" + os.getlogin() + "/.steam/debian-installation/steamapps/common/American Truck Simulator/bin/linux_x64"
+    else:
+        fg("Failed to find American Truck Simulator folder. Please open steam and copy the game path and paste it below. or if the game is not installed leave blank and press enter")
+        gamefolder = input()
+        gamefolder = gamefolder.replace(" ", "")
+
+    if gamefolder != "":
+
+        if os.path.exists(gamefolder):
+            if not os.path.exists(gamefolder + "/plugins"):
+                folder = os.path.join(gamefolder, "plugins")
+                os.system("mkdir -p \"" + folder + "\"")
+            
+            #Copy dlls
+            try:
+                os.system("cp -r ../helpers/dlls/Linux/* \"" + folder + "\"")
+            except:
+                print("Failed to copy dlls. Please copy them manually and try again.")
+
+    
+
+    
+
+        
+else:
+    bg("\n┏ Installing DLLs...")
+    bg("┗ This may take a while...\n")
+
+    print("\nInstalling ETS2/ATS plugin...")
+
+    import ..helpers.steamParser as steamParser
+
+    # Find the SCS games
+    scsGames = steamParser.FindSCSGames()
+
+    # Create a string to display the found games
+    foundString = "Found the following games automatically:\n"
+    for game in scsGames:
+        foundString += game + ": True\n"
+
+    print(foundString)
+
+    # Ask the user for the additional directory
+    additionalDir = input("Enter the path to the additional directory (leave blank if not found): ")
+    if additionalDir != "":
+        # Check the base.scs file exists in that directory
+        if os.path.isfile(os.path.join(additionalDir, "base.scs")):
+            print("Base.scs found in that directory!")
+            scsGames += [additionalDir]
+        else:
+            print("Base.scs not found in that directory. Skipping...")
+
+    # Copy the plugin to the correct folder
+    successfullyInstalled = []
+    for game in scsGames:
+        print(game)
+        # Check if the plugins folder exists
+        if not os.path.isdir(os.path.join(game, "bin", "win_x64", "plugins")):
+            os.makedirs(os.path.join(game, "bin", "win_x64", "plugins"))
+        
+        # Copy the plugin to the folder
+        try:
+            # Copy the API
+            shutil.copy(os.path.join(os.path.dirname(__file__), "..", "helpers", "dlls", "Windows", "scs-telemetry.dll"), os.path.join(game, "bin", "win_x64", "plugins"))
+            # Copy the controller SDK
+            shutil.copy(os.path.join(os.path.dirname(__file__), "..", "helpers", "dlls", "Windows", "scs-telemetry.dll"), os.path.join(game, "bin", "win_x64", "plugins"))
+            successfullyInstalled.append(game)
+        except:
+            print("Failed to copy the plugin to " + os.path.join(game, "bin", "win_x64", "plugins"))
+    
+    if successfullyInstalled != []:
+        print("Successfully installed at least some plugin(s)!")
+    else:
+        print("Failed to install the plugin(s)!")
 # region CUDA
 
 if CUDA:
