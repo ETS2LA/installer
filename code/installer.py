@@ -347,7 +347,7 @@ else:
 
     print("\nInstalling ETS2/ATS plugin...")
 
-    import ..helpers.steamParser as steamParser
+    import helpers.steamParser as steamParser
 
     # Find the SCS games
     scsGames = steamParser.FindSCSGames()
