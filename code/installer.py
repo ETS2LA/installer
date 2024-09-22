@@ -272,10 +272,12 @@ if LINUX:
 
         if distro == "unknown":
             print("Distro not detected. Please install tkinter manually and try again.")
+            input("Press enter to continue...")
 
         if distro != "unknown" and distro != "linuxmint" and distro != "ubuntu" and distro != "debian" and distro != "arch" and distro != "manjaro":
             print("Your distro is not supported. Please install tkinter manually and try again.")
-            quit()
+            input("Press enter to continue...")
+
 
         #Check if tkinter is installed
 
