@@ -27,5 +27,6 @@ echo "+ Done"
 echo "Running the installer / app..."
 sleep 1
 
-cd code
-sudo python installer.py
+source venv/bin/activate
+sudo -E venv/bin/python code/installer.py
+

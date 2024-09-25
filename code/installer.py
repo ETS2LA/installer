@@ -59,7 +59,9 @@ def start_app():
 
 # region Variables
 
+#Check if your in a venv
 DIR =  sys.path[0]
+
 VER = sys.version.split(" ")[0]
 NODE_VER = os.popen("node -v").read().strip()
 RAM = psutil.virtual_memory().total / 1024 / 1024 / 1024
@@ -68,10 +70,18 @@ SPACE = psutil.disk_usage(DIR).free / 1024 / 1024 / 1024
 GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
 LINUX = os.path.exists("/etc/os-release")
+
 if LINUX:
     CLONED = os.path.exists(DIR + "/app")
 else:
     CLONED = os.path.exists(DIR + "\\app")
+
+if LINUX:
+    if "VIRTUAL_ENV" in os.environ:
+        print("Inside venv")
+    else:
+        print("Installer not ran inside venv")
+        sys.exit(1)
 
 # endregion
 
