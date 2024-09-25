@@ -150,7 +150,7 @@ wait("┗ ", 2)
 
 bg("\n┏ Starting install...")
 if " " in DIR:
-    err("┗ Your installation path contains a space. Please move the installer to a path without spaces.")
+    err("┣ Your installation path contains a space. Please move the installer to a path without spaces.")
     sys.exit(1)
 bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_ACCESS_GITHUB else '[blue][bold]GitHub[/bold][/blue]'}...\n")
 
