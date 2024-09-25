@@ -60,6 +60,7 @@ def start_app():
 # region Variables
 
 DIR =  sys.path[0]
+
 VER = sys.version.split(" ")[0]
 NODE_VER = os.popen("node -v").read().strip()
 RAM = psutil.virtual_memory().total / 1024 / 1024 / 1024
@@ -68,10 +69,20 @@ SPACE = psutil.disk_usage(DIR).free / 1024 / 1024 / 1024
 GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
 LINUX = os.path.exists("/etc/os-release")
+
 if LINUX:
     CLONED = os.path.exists(DIR + "/app")
 else:
     CLONED = os.path.exists(DIR + "\\app")
+
+# Check if in venv
+
+if LINUX:
+    if "VIRTUAL_ENV" in os.environ:
+        print("Inside venv")
+    else:
+        print("Installer not ran inside venv")
+        sys.exit(1)
 
 # endregion
 
@@ -275,10 +286,12 @@ if LINUX:
 
         if distro == "unknown":
             print("Distro not detected. Please install tkinter manually and try again.")
+            input("Press enter to continue...")
 
         if distro != "unknown" and distro != "linuxmint" and distro != "ubuntu" and distro != "debian" and distro != "arch" and distro != "manjaro":
             print("Your distro is not supported. Please install tkinter manually and try again.")
-            quit()
+            input("Press enter to continue...")
+
 
         #Check if tkinter is installed
 
