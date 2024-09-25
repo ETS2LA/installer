@@ -35,7 +35,7 @@ def replace_input(text, default=None):
         sys.stdout.write("\033[K")
         console.print(defaultText)
         return default
-    return response
+    return response.lower()
 def wait(prefix, seconds, type = "line"):
     start = time.time()
     while time.time() - start < seconds:
