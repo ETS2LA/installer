@@ -149,24 +149,27 @@ wait("┗ ", 2)
 # region Install
 
 bg("\n┏ Starting install...")
+if " " in DIR:
+    err("┗ Your installation path contains a space. Please move the installer to a path without spaces.")
+    sys.exit(1)
 bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_ACCESS_GITHUB else '[blue][bold]GitHub[/bold][/blue]'}...\n")
 
 if not CAN_ACCESS_GITHUB:
     if LINUX:
-        os.system(f"git clone {SOURCEFORGE_URL} '{DIR}/app'")
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}/app")
     else:
-        os.system(f"git clone {SOURCEFORGE_URL} '{DIR}\\app'")
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
 else:
     if LINUX:
-        os.system(f"git clone {GITHUB_URL} '{DIR}/app'")
+        os.system(f"git clone {GITHUB_URL} {DIR}/app")
     else:
-        os.system(f"git clone {GITHUB_URL} '{DIR}\\app'")
+        os.system(f"git clone {GITHUB_URL} {DIR}\\app")
     
 # Switch to the rewrite branch
 if LINUX:
-    os.system(f"cd '{DIR}/app' && git checkout rewrite")
+    os.system(f"cd {DIR}/app && git checkout rewrite")
 else:
-    os.system(f"cd '{DIR}\\app' && git checkout rewrite")
+    os.system(f"cd {DIR}\\app && git checkout rewrite")
     
 bg("\n┏ Git done, checking...")
 
@@ -190,17 +193,17 @@ if LINUX:
             if "pywin32" not in line:
                 f.write(line)
         f.truncate()
-    os.system(f"pip install -r '{DIR}/app/requirements.txt'")
+    os.system(f"pip install -r {DIR}/app/requirements.txt")
 else:
-    os.system(f"pip install -r '{DIR}\\app\\requirements.txt'")
+    os.system(f"pip install -r {DIR}\\app\\requirements.txt")
 
 bg("\n┏ Dependencies done, continuing...")
 bg("┗ Setting up node...\n")
 
 if LINUX:
-    os.system(f"cd '{DIR}/app/frontend' && npm install")
+    os.system(f"cd {DIR}/app/frontend && npm install")
 else:
-    os.system(f"cd '{DIR}\\app\\frontend' && npm install")
+    os.system(f"cd {DIR}\\app\\frontend && npm install")
 
 #Install spesfic deps for linux
 
@@ -214,7 +217,7 @@ if LINUX:
     #Make app folder a user folder
     bg("\nMaking app folder a user folder...")
 
-    os.system(f"sudo chmod -R 777 '{DIR}/app'")
+    os.system(f"sudo chmod -R 777 {DIR}/app")
 
     #Check if tinkery is installed
 
