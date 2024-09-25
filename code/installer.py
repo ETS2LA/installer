@@ -59,7 +59,6 @@ def start_app():
 
 # region Variables
 
-#Check if your in a venv
 DIR =  sys.path[0]
 
 VER = sys.version.split(" ")[0]
@@ -75,6 +74,8 @@ if LINUX:
     CLONED = os.path.exists(DIR + "/app")
 else:
     CLONED = os.path.exists(DIR + "\\app")
+
+# Check if in venv
 
 if LINUX:
     if "VIRTUAL_ENV" in os.environ:
