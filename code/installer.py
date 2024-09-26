@@ -48,10 +48,19 @@ def wait(prefix, seconds, type = "line"):
                 print(f'\r{prefix}Please wait... ' + c, end="")
                 time.sleep(0.1)
     print(f'\r{prefix}Please wait... Done.')
+
 def start_app():
     if LINUX:
         os.chdir(DIR + "/app")
-        os.system("python main.py")
+        #Remove /code from DIR
+        RemovedDIR = DIR.replace("/code", "")
+        #Check if user is root
+
+        if os.getuid() == 0:
+            os.system(f"{RemovedDIR}/venv/bin/python main.py")
+        else:
+            print("Please run the installer as root.")
+            sys.exit(1)
     else:
         os.chdir(DIR + "\\app")
         os.system("python main.py")
