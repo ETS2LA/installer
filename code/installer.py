@@ -57,7 +57,9 @@ def start_app():
         #Check if user is root
 
         if os.getuid() == 0:
-            os.system(f"{RemovedDIR}/venv/bin/python main.py")
+            os.system(f". {RemovedDIR}/venv/bin/activate")
+            os.system(f"python main.py")
+            #os.system(f"{RemovedDIR}/venv/bin/python main.py")
         else:
             print("Please run the installer as root.")
             sys.exit(1)
