@@ -48,20 +48,13 @@ def wait(prefix, seconds, type = "line"):
                 print(f'\r{prefix}Please wait... ' + c, end="")
                 time.sleep(0.1)
     print(f'\r{prefix}Please wait... Done.')
-
 def start_app():
     if LINUX:
+        currentdir = os.getcwd()
         os.chdir(DIR + "/app")
-        #Remove /code from DIR
-        RemovedDIR = DIR.replace("/code", "")
-        #Check if user is root
-
-        if os.getuid() == 0:
-            os.system(f". {RemovedDIR}/venv/bin/activate")
-            os.system(f"{RemovedDIR}/venv/bin/python main.py")
-        else:
-            print("Please run the installer as root.")
-            sys.exit(1)
+        os.system(f"{currentdir}/venv/bin/python main.py")
+        #os.chdir(DIR + "/app")
+        #os.system("python main.py")
     else:
         os.chdir(DIR + "\\app")
         os.system("python main.py")
@@ -214,7 +207,11 @@ if LINUX:
             if "pywin32" not in line:
                 f.write(line)
         f.truncate()
-    os.system(f"pip install -r {DIR}/app/requirements.txt")
+    print(os.system("which python"))
+    #current directory
+    print(os.getcwd())
+    os.system(f"venv/bin/pip install -r {DIR}/app/requirements.txt")
+    input("Press enter to continue...")
 else:
     os.system(f"pip install -r {DIR}\\app\\requirements.txt")
 
@@ -284,7 +281,7 @@ if LINUX:
             elif checkinput == "n":
                 print("Please install tkinter manually and try again.")
 
-        if distro == "arch" or distro == "manjaro":
+        if distro == "arch" or distro == "manjaro" or distro == "endeavouros":
             checkinput = ""
             while checkinput != "y" and checkinput != "n":
                 checkinput = input("Would you like to install tkinter via pacman? (y/n) ")
@@ -297,8 +294,7 @@ if LINUX:
         if distro == "unknown":
             print("Distro not detected. Please install tkinter manually and try again.")
             input("Press enter to continue...")
-
-        if distro != "unknown" and distro != "linuxmint" and distro != "ubuntu" and distro != "debian" and distro != "arch" and distro != "manjaro":
+        else:
             print("Your distro is not supported. Please install tkinter manually and try again.")
             input("Press enter to continue...")
 
