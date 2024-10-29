@@ -50,8 +50,11 @@ def wait(prefix, seconds, type = "line"):
     print(f'\r{prefix}Please wait... Done.')
 def start_app():
     if LINUX:
+        currentdir = os.getcwd()
         os.chdir(DIR + "/app")
-        os.system("python main.py")
+        os.system(f"{currentdir}/venv/bin/python3 main.py")
+        #os.chdir(DIR + "/app")
+        #os.system("python main.py")
     else:
         os.chdir(DIR + "\\app")
         os.system("python main.py")
@@ -204,7 +207,10 @@ if LINUX:
             if "pywin32" not in line:
                 f.write(line)
         f.truncate()
-    os.system(f"pip install -r {DIR}/app/requirements.txt")
+    #print(os.system("which python"))
+    #current directory
+    #print(os.getcwd())
+    os.system(f"venv/bin/pip install -r {DIR}/app/requirements.txt")
 else:
     os.system(f"pip install -r {DIR}\\app\\requirements.txt")
 
@@ -269,26 +275,26 @@ if LINUX:
                 checkinput = input("Would you like to install tkinter via apt? (y/n) ")
             if checkinput == "y":
                 print("Installing tkinter via apt...")
-                os.system("sudo apt update")
-                os.system("sudo apt install python3-tk -y")
+                os.system("apt update")
+                os.system("apt install python3-tk -y")
             elif checkinput == "n":
                 print("Please install tkinter manually and try again.")
 
-        if distro == "arch" or distro == "manjaro":
+        if distro == "arch" or distro == "manjaro" or distro == "endeavouros":
             checkinput = ""
             while checkinput != "y" and checkinput != "n":
-                checkinput = input("Would you like to install tkinter via pacman? (y/n) ")
+                checkinput = input("Would you like to install tkinter and gdot via yay? (y/n) ")
             if checkinput == "y":
-                print("Installing tkinter via pacman...")
-                os.system("sudo pacman -S tk")
+                print("Installing tkinter via pyay...")
+                os.system("yay -S tk")
+                os.system("yay -S gobject-introspection")
             elif checkinput == "n":
                 print("Please install tkinter manually and try again.")
 
         if distro == "unknown":
             print("Distro not detected. Please install tkinter manually and try again.")
             input("Press enter to continue...")
-
-        if distro != "unknown" and distro != "linuxmint" and distro != "ubuntu" and distro != "debian" and distro != "arch" and distro != "manjaro":
+        else:
             print("Your distro is not supported. Please install tkinter manually and try again.")
             input("Press enter to continue...")
 
