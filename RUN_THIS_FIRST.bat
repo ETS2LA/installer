@@ -1,6 +1,6 @@
 @echo off
-:: Check if python is version 3.10 or 3.11
-python --version 2>&1 | findstr /R /C:"Python 3\.[1][01]\." >nul
+:: Check if python is version 3.11 or 3.12
+python --version 2>&1 | findstr /R /C:"Python 3\.[1][12]\." >nul
 if errorlevel 1 goto errorNoPython
     echo + Compatible python version found
 
