@@ -1,1 +1,1 @@
-cmd /K "cd venv && cd Scripts && activate"
+cmd /K "cd venv && cd Scripts && activate && cd .. && cd .."
