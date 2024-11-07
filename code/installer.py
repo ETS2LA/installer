@@ -170,14 +170,14 @@ bg(f"┗ Cloning from {'[yellow][bold]sourceforge[/bold][/yellow]' if not CAN_AC
 
 if not CAN_ACCESS_GITHUB:
     if LINUX:
-        os.system(f"git clone {SOURCEFORGE_URL} {DIR}/app")
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}/app --depth 50 -b rewrite --single-branch")
     else:
-        os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app")
+        os.system(f"git clone {SOURCEFORGE_URL} {DIR}\\app --depth 50 -b rewrite --single-branch")
 else:
     if LINUX:
-        os.system(f"git clone {GITHUB_URL} {DIR}/app")
+        os.system(f"git clone {GITHUB_URL} {DIR}/app  --depth 50 -b rewrite --single-branch")
     else:
-        os.system(f"git clone {GITHUB_URL} {DIR}\\app")
+        os.system(f"git clone {GITHUB_URL} {DIR}\\app  --depth 50 -b rewrite --single-branch")
     
 # Switch to the rewrite branch
 if LINUX:

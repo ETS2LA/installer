@@ -1,5 +1,10 @@
-import requests
 import os
+try:
+    import requests
+except:
+    import os
+    os.system("pip install requests")
+    import requests
 
 NODE_URL = "https://nodejs.org/dist/v20.15.0/node-v20.15.0-x64.msi"
 
