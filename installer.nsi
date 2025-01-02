@@ -1,12 +1,6 @@
 Unicode True
 
-; Load and configure language presets
-LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
-
-; Load language strings
-!include "languages\\en.nsh"
-!include "languages\\zh_CN.nsh"
+!include "languages.nsh"
 
 ; Set the default installation directory
 InstallDir "C:\LaneAssist"

@@ -1,4 +1,4 @@
-; Welcome
+﻿; Welcome
 LangString WelcomeTitle ${LANG_TRADCHINESE} "歡迎使用 歐卡2車道輔助 / ETS2LA 安裝程式"
 LangString WelcomeText ${LANG_TRADCHINESE} "此安裝包將引導您完成 歐卡2車道輔助 (ETS2LA) 的安裝。$\r$\n$\r$\n按下下一步繼續。"
 
