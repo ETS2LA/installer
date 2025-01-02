@@ -1,0 +1,32 @@
+name: Build using NSIS
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install NSIS
+        uses: repolevedavaj/install-nsis@v1.0.2
+        with:
+          nsis-version: '3.10'
+      - name: Install NSIS Inetc plugin
+        run: |
+          Invoke-WebRequest https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip -OutFile C:\WINDOWS\Temp\Inetc_plugin.zip
+          Expand-Archive "C:\WINDOWS\Temp\Inetc_plugin.zip" -DestinationPath "C:\Program Files (x86)\NSIS" -Force
+        shell: pwsh
+      - name: Build Installer
+        run: |
+          makensis installer.nsi
+        shell: cmd
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ETS2LA-Installer
+          path: ETS2LA-Installer.exe
