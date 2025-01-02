@@ -31,7 +31,7 @@ Outfile "ETS2LA-Installer.exe"
 
 ; Set the name of the application
 Name "ETS2LA"
-BrandingText "wiki.tumppi066.fi"
+BrandingText "wiki.ets2la.com"
 
 ; Set the icon
 Icon "icon/favicon.ico"
