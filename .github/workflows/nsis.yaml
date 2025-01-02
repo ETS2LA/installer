@@ -3,9 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -23,6 +21,13 @@ jobs:
           Invoke-WebRequest https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip -OutFile C:\WINDOWS\Temp\Inetc_plugin.zip
           Expand-Archive "C:\WINDOWS\Temp\Inetc_plugin.zip" -DestinationPath "C:\Program Files (x86)\NSIS" -Force
         shell: pwsh
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.12'
+      - name: Precompile Installer Sources
+        run: |
+          python auto_precompile.py
       - name: Build Installer
         run: |
           makensis installer.nsi
