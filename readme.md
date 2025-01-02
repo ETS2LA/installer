@@ -6,7 +6,7 @@ This is an installer for ETS2LA, Euro Truck Simulator 2 Lane Assist, written in 
 
 Find the latest release from [GitHub Releases (**latest**)](https://github.com/ETS2LA/installer/releases/latest), choose `ETS2LA-Installer.exe`, download and run it.
 
-ETS2LA's installers 
+*ETS2LA's installer's version is not associated with the ETS2LA per se.*
 
 ## Building from source / Development
 
