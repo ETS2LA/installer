@@ -1,13 +1,23 @@
+Unicode True
+
+; Load and configure language presets
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
+
+; Load language strings
+!include "languages\\en.nsh"
+!include "languages\\zh_CN.nsh"
+
 ; Set the default installation directory
 InstallDir "C:\LaneAssist"
 
 ; Customize the welcome page
-!define MUI_WELCOMEPAGE_TITLE "Welcome to the Euro Truck Simulator 2 Lane Assist Installer"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of Euro Truck Simulator 2 Lane Assist. $\r$\n$\r$\nClick Next to continue."
+!define MUI_WELCOMEPAGE_TITLE $(WelcomeTitle)
+!define MUI_WELCOMEPAGE_TEXT $(WelcomeText)
 
 ; Customize the finish page
 !define MUI_FINISHPAGE_RUN "$INSTDIR\run.bat"
-!define MUI_FINISHPAGE_RUN_TEXT "Run ETS2LA"
+!define MUI_FINISHPAGE_RUN_TEXT $(FinishRunText)
 
 ; Icons
 !define MUI_ICON "icon/favicon.ico"
@@ -36,7 +46,7 @@ Icon "icon/favicon.ico"
 ; Start the sections
 Section "Python" SEC01
     ; Check if Python is installed
-    DetailPrint "Checking if Python is installed..."
+    DetailPrint $(SEC01_CheckIfPythonInstalled)
     ClearErrors
     nsExec::ExecToStack 'CMD /C python --version'
     Pop $0 ; status
@@ -52,7 +62,7 @@ Section "Python" SEC01
         CheckMinorVersion:
             StrCmp $4 12 PythonTooNew PythonInstalled ; compare the minor version number to 12
         PythonTooNew:
-            MessageBox MB_OK "Your python version is too new. Please uninstall your current version and run the setup again."
+            MessageBox MB_OK $(SEC01_PythonVersionTooNew)
             Quit
         PythonInstalled:
             Goto End
@@ -62,7 +72,7 @@ Section "Python" SEC01
         Var /GLOBAL PythonInstaller
         StrCpy $PythonInstaller "python-3.11.8-amd64.exe"
 
-        DetailPrint "Downloading Python installer..."
+        DetailPrint $(SEC01_DownloadingPythonInstaller)
         ; Download the Python installer
         inetc::get /SILENT /PROGRESS "https://www.python.org/ftp/python/3.11.8/$PythonInstaller" "$TEMP/$PythonInstaller" /END
 
@@ -72,14 +82,14 @@ Section "Python" SEC01
         ; Delete the Python installer
         Delete "$TEMP/$PythonInstaller"
 
-        MessageBox MB_OK "Python has been installed, please open the installer again to continue."
+        MessageBox MB_OK $(SEC01_PythonInstalledSuccessfully)
         Quit
     End:
 SectionEnd
 
 Section "Git" SEC02
     ; Check if Git is installed
-    DetailPrint "Checking if Git is installed..."
+    DetailPrint $(SEC02_CheckIfGitInstalled)
     ClearErrors
     nsExec::ExecToStack 'CMD /C git --version'
     Pop $0 ; status
@@ -92,7 +102,7 @@ Section "Git" SEC02
         StrCpy $GitInstaller "Git-2.44.0-64-bit.exe"
 
         ; Download the Git installer
-        DetailPrint "Downloading Git installer..."
+        DetailPrint $(SEC02_DownloadingGitInstaller)
         inetc::get /SILENT /PROGRESS "https://github.com/git-for-windows/git/releases/download/v2.44.0.windows.1/Git-2.44.0-64-bit.exe" "$TEMP/$GitInstaller" /END
 
         ; Run the Git installer
@@ -101,27 +111,27 @@ Section "Git" SEC02
         ; Delete the Git installer
         Delete "$TEMP/$GitInstaller"
 
-        MessageBox MB_OK "Git has been installed, please open the installer again to continue."
+        MessageBox MB_OK $(SEC02_GitInstalledSuccessfully)
         Quit
     End:
 SectionEnd
 
 Section "MainSection" SEC03
     ; Git clone the Lane Assist repository
-    DetailPrint "Downloading Lane Assist repository..."
+    DetailPrint $(SEC03_DownloadLALibrary)
     
     ExecWait 'cmd /c "git clone https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git $INSTDIR\app"'
 
-    DetailPrint "Creating python venv..."
+    DetailPrint $(SEC03_CreatingPythonVenv)
     ; Create a venv in the INSTDIR/venv dir
     nsExec::ExecToStack 'python -m venv "$INSTDIR"/venv'
     Pop $0 ; status
     StrCmp $0 "error" VenvCreationFailed
         Goto VenvCreationSuccess
     VenvCreationFailed:
-        MessageBox MB_OK "Failed to create python venv. Please check your python installation and try again."
+        MessageBox MB_OK $(SEC03_FailedToCreateVenv)
     VenvCreationSuccess:
-        DetailPrint "Installing requirements... (THE INSTALLER WILL BE UNRESPONSIVE, BE PATIENT)"
+        DetailPrint $(SEC03_InstallingRequirements)
         
         ; Write the requirements.bat file
         FileOpen $0 "$INSTDIR\requirements.bat" "w"
@@ -146,7 +156,7 @@ Section "MainSection" SEC03
         FileWrite $0 'cmd /k"cd "$INSTDIR/venv/Scripts" & .\activate.bat & cd $INSTDIR"'
         FileClose $0
 
-        MessageBox MB_OK "Lane Assist has been installed successfully."
+        MessageBox MB_OK $(SEC03_LAInstallationCompleted)
 
     ; Create Start Menu shortcuts
     CreateDirectory $SMPROGRAMS\ETS2LA
@@ -165,5 +175,3 @@ Section "Uninstall"
     ; Remove the installation directory
     ExecWait 'cmd.exe /C rd /S /Q "$INSTDIR"'
 SectionEnd
-
-!insertmacro MUI_LANGUAGE "English"
