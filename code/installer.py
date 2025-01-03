@@ -70,7 +70,7 @@ RAM = psutil.virtual_memory().total / 1024 / 1024 / 1024
 CORES = psutil.cpu_count()
 SPACE = psutil.disk_usage(DIR).free / 1024 / 1024 / 1024
 GITHUB_URL = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
-SOURCEFORGE_URL = "https://tumppi066@git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
+SOURCEFORGE_URL = "git://git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
 LINUX = os.path.exists("/etc/os-release")
 
 if LINUX:
