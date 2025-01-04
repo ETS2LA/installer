@@ -214,13 +214,13 @@ if LINUX:
 else:
     os.system(f"pip install -r {DIR}\\app\\requirements.txt")
 
-bg("\n┏ Dependencies done, continuing...")
-bg("┗ Setting up node...\n")
-
-if LINUX:
-    os.system(f"cd {DIR}/app/Interface && npm install")
-else:
-    os.system(f"cd {DIR}\\app\\Interface && npm install")
+# bg("\n┏ Dependencies done, continuing...")
+# bg("┗ Setting up node...\n")
+# 
+# if LINUX:
+#     os.system(f"cd {DIR}/app/Interface && npm install")
+# else:
+#     os.system(f"cd {DIR}\\app\\Interface && npm install")
 
 #Install spesfic deps for linux
 
