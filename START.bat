@@ -1,4 +1,13 @@
 @echo off
+set FILE_PATH="checked.txt"
+
+if not exist %FILE_PATH% (
+    echo You didnt run the RUN_THIS_FIRST.bat ! Please exit and run the RUN_THIS_FIRST.bat !
+    pause
+    exit
+)
+
+
 
 if NOT EXIST code (
     echo - Error: code folder not found
