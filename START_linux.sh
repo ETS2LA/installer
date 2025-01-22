@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -f "checked.txt" ]; then
+  echo "You didnt run the RUN_THIS_FIRST_linux.sh ! Please exit and run the RUN_THIS_FIRST_linux.sh !"
+  exit 1
+fi
+
 if [ ! -d "code" ]; then
     echo "- Error: code folder not found"
     echo ""
