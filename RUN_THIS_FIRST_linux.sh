@@ -76,5 +76,6 @@ echo "START_linux.sh is now executable."
 
 echo "All prerequisites are installed, you can now run the START file."
 read -n1 -r -p "Press any key to continue..."
+echo "Basically its nothing at here, this file is just a REALLY simple checker. I mean, I added this check for a reason, I never do something for no reason. EVERY LINE OF CODE HAS THEIR OWN PURPOSE AND REASON TO EXIST.- Yours truly, The Tormented MRUIAW" > checked.txt
 
 export PATH=$PATH:/home/zia/.nvm/versions/node/v18.20.4/bin
