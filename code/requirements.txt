@@ -1,3 +1,0 @@
-deep-translator
-psutil
-rich
