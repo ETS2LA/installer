@@ -55,8 +55,8 @@ if exist "%PythonSavePath%" (
     del "%PythonSavePath%"
 )
 
-:: Install wheel
-"%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel
+:: Install wheel, setuptools
+"%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools
 
 echo Done.
 echo.

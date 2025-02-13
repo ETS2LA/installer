@@ -22,4 +22,4 @@ set "pip_url=https://bootstrap.pypa.io/get-pip.py"
 set "pip_save_path=%python_extract_path%\get-pip.py"
 
 :: PATH
-set PATH=%cd%\system\git\bin;%cd%\system\python;%cd%\system\python\Scripts;%PATH%
+set PATH=%cd%\system\git\bin;%cd%\system\python;%cd%\system\python\Scripts;%cd%\app;%PATH%
