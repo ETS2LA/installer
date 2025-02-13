@@ -1,1 +1,6 @@
+# Ignore Visual Studio Code
 .vscode
+
+# Ignore download folders
+system
+app
