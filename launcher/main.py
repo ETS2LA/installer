@@ -33,13 +33,23 @@ except:
     import git
 #endregion
 
-start_command = 'start cmd /k "call helpers/environment.bat && cd app && python main.py"'
+start_command = "call helpers/environment.bat && cd app && python main.py"
+console_command = "call helpers/environment.bat && cd app"
 
 install_folder = "app"
 is_installed = False
 
-local_mode = False
-dev_mode = False
+sure_to_install = False
+sure_to_uninstall = False
+
+github_link = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
+gitlab_link = "https://gitlab.com/ETS2LA/ETS2LA"
+sourceforge_link = "https://git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
+
+download_server = "Download from GitHub"
+
+state = " "
+state_start_time = 0
 
 try:
     git.Repo(install_folder)
@@ -50,11 +60,16 @@ dpg.create_context()
 with dpg.font_registry():
     regular_font = dpg.add_font('launcher/Geist-Regular.ttf', 18)
 
-dpg.create_viewport(width=400, height=200, title=" ", clear_color=(20, 20, 20), small_icon="launcher/favicon.ico", large_icon="launcher/favicon.ico", resizable=False)
+dpg.create_viewport(width=400, height=200, title=" ", clear_color=(20, 20, 20), 
+                    small_icon="launcher/favicon.ico", large_icon="launcher/favicon.ico", 
+                    resizable=False)
 dpg.setup_dearpygui()
 
+# Convert a package name to a readable name that (hopefully) matches the package name.
 def get_readable_name(module: str):
-    delimiters = ["-", "_", ".", " ", "=", ">", "<", "!", "?", ":", ";", "{", "}", "[", "]", "(", ")", "|", "&", "*", "^", "%", "$", "#", "@", "~", "`", "'", '"']
+    delimiters = ["-", "_", ".", " ", "=", ">", "<", "!", "?", ":", ";", "{", "}", 
+                  "[", "]", "(", ")", "|", "&", "*", "^", "%", "$", "#", "@", "~", 
+                  "`", "'", '"']
     index = 0
     for char in module:
         if char in delimiters:
@@ -63,6 +78,7 @@ def get_readable_name(module: str):
         
     return module[:index]
 
+# Match a package name to a line in the requirements file to get the progress.
 def get_index(lines: list[str], target: str):
     index = 0
     for line in lines:
@@ -71,20 +87,12 @@ def get_index(lines: list[str], target: str):
         index += 1
     return -1
 
-stop_updating = False
-def update_thread(text = "Installing"):
-    start_time = time.time()
-    while not stop_updating:
-        dpg.render_dearpygui_frame()
-        dpg.set_viewport_title(f"{text} - {round(time.time() - start_time)}s")
-        time.sleep(1)
-        
-    dpg.set_viewport_title(" ")
-
 # https://github.com/ETS2LA/lite/blob/main/app/src/pytorch.py#L43
 def pip_install_with_progress(requirements_file_path, progress_tag, step_progress, text_tag):
     dpg.configure_item(progress_tag, show=True)
-    command = ["pip", "install", "-r", requirements_file_path, "--no-cache-dir", "--no-warn-script-location", "--disable-pip-version-check", "--progress-bar", "raw"]
+    command = ["pip", "install", "-r", requirements_file_path, "--no-cache-dir", 
+               "--no-warn-script-location", "--disable-pip-version-check", 
+               "--progress-bar", "raw"]
     try:
         lines = open(requirements_file_path, "r").readlines()
         count = len(lines)
@@ -150,47 +158,120 @@ def pip_install_with_progress(requirements_file_path, progress_tag, step_progres
        dpg.configure_item(progress_tag, show=False)
        print(f"Error during installation: {e}")
 
+# Git progress handler.
+class CloneProgress(git.RemoteProgress):
+    def __init__(self):
+        super().__init__()
+        self.total_ops = 0
+        self.completed_ops = 0
+        self.last_percent = 0
+        self.last_message = "Cloning..."
+        
+    def update(self, op_code, cur_count, max_count=None, message=""):
+        if message != self.last_message and message != "":
+            self.last_message = message
+        
+        if max_count is not None:
+          percent = round((cur_count / max_count) * 100)
+
+          if percent != self.last_percent:
+              dpg.configure_item("progress", overlay=f"{self.last_message} {percent}%", default_value=percent / 100)
+
+        # Reset percentage after each file:
+        if op_code & (git.RemoteProgress.RECEIVING | git.RemoteProgress.COMPRESSING | git.RemoteProgress.RESOLVING):
+            if cur_count == max_count and max_count > 0: # Check if the step is about to end
+                self.last_percent = 0
 
 def install_app():
+    global sure_to_install, state, state_start_time
+    if not sure_to_install:
+        dpg.configure_item("button", label="Are you sure?", callback=install_app)
+        sure_to_install = True
+        return
+    
+    sure_to_install = False
     try:
-        thread = threading.Thread(target=update_thread)
-        thread.start()
+        state = "Installing"
+        state_start_time = time.time()
+        dpg.configure_item("progress_spacer", height=10)
         
         dpg.configure_item("button", show=False)
+        dpg.configure_item("download_server", show=False)
         dpg.configure_item("progress", overlay="Cloning...", default_value=-1, show=True)
-        dpg.configure_item("installed_text", default_value="This step will download the latest version of ETS2LA.")
+        dpg.configure_item("installed_text", default_value="We are now downloading the ETS2LA codebase. This will take a while depending on your internet.")
 
-        git.Repo.clone_from("https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git", install_folder, multi_options=[
+        link = ""
+        download_server = dpg.get_value("download_server")
+        if download_server == "Download from GitHub":
+            link = github_link
+        elif download_server == "Download from GitLab":
+            link = gitlab_link
+        elif download_server == "Download from SourceForge":
+            link = sourceforge_link
+
+        git.Repo.clone_from(link, install_folder, multi_options=[
             " --depth=20",
             " --branch=rewrite",
             " --single-branch"
-        ])
+        ], progress=CloneProgress())
+        
+        # Check that the repo actually got cloned
+        if os.path.exists(install_folder):
+            if os.path.exists(f"{install_folder}/requirements.txt"):
+                dpg.configure_item("progress", overlay="Installing...")
+                dpg.configure_item("installed_text", default_value="We are now downloading the required dependencies. This will take a while depending on your internet.")
 
-        dpg.configure_item("progress", overlay="Installing...")
-        dpg.configure_item("installed_text", default_value="We are now downloading the required dependencies.\nThis will take a while depending on your internet.")
+                pip_install_with_progress(f"{install_folder}/requirements.txt", "progress", "step_progress", "installed_text")
 
-        pip_install_with_progress(f"{install_folder}/requirements.txt", "progress", "step_progress", "installed_text")
+                global is_installed, stop_updating
+                is_installed = True
+                stop_updating = True
 
-        global is_installed, stop_updating
-        is_installed = True
-        stop_updating = True
-
+                state = " "
+                    
+                dpg.configure_item("progress_spacer", height=0)
+                update_ui()
+                return
+            
+        state = " "
+        dpg.configure_item("progress_spacer", height=0)
+        print("Error: The repository was not cloned successfully. Please try a different download server.")
         update_ui()
 
     except Exception as e:
-       print(f"Error during installation: {e}")
+        dpg.configure_item("progress_spacer", height=0)
+        state = " "
+        print(f"Error during installation: {e}")
 
 def remove_app():
+    global sure_to_uninstall
+    if not sure_to_uninstall:
+        dpg.configure_item("remove_button", label="Are you sure?", callback=remove_app)
+        sure_to_uninstall = True
+        return
+    
+    sure_to_uninstall = False
     try:
-        dpg.configure_item("button", enabled=False)
-        dpg.configure_item("button", label="Removing...")
-        dpg.configure_item("installed_text", default_value="Please restart the launcher.")
+        dpg.configure_item("button", show=False)
+        dpg.configure_item("installed_text", show=False)
+        dpg.configure_item("console_button", show=False)
+        dpg.configure_item("download_server", show=False)
+        dpg.configure_item("dev_mode_checkbox", show=False)
+        dpg.configure_item("local_mode_checkbox", show=False)
+        dpg.configure_item("hide_console_checkbox", show=False)
+        dpg.configure_item("no_ui_checkbox", show=False)
 
+        dpg.configure_item("remove_button", label="Uninstalling requirements...")
+        os.system(f"pip uninstall -r {install_folder}/requirements.txt -y")
+        dpg.configure_item("remove_button", label="Removing ETS2LA...")
         os.system(f"rmdir /s /q {install_folder}")
+        dpg.configure_item("remove_button", label="Restoring launcher requirements...", show=True)
+        os.system("pip install wheel setuptools poetry dearpygui psutil")
 
         global is_installed
         is_installed = False
 
+        dpg.configure_item("installed_text", default_value="Please restart the launcher.", show=True)
         update_ui()
 
     except Exception as e:
@@ -199,35 +280,75 @@ def remove_app():
 
 def start_app():
     try:
-        os.system(start_command)
+        command = start_command
+        if dpg.get_value("dev_mode_checkbox"):
+            command += " --dev"
+        if dpg.get_value("local_mode_checkbox"):
+            command += " --local"
+            
+        print(f"Starting app with command: {command}")
+        os.system(f'start cmd /k "{command}"')
         print("App started in a separate process.")
-        exit()
 
     except Exception as e:
         print(f"Error starting the app: {e}")
+        
+def open_console():
+    try:
+        os.system(f'start cmd /k "{console_command}"')
+        print("Console opened in a separate process.")
+    except Exception as e:
+        print(f"Error opening the console: {e}")
 
 def update_ui():
     """Updates the UI based on the installation state."""
     dpg.configure_item("installed_text", show=not is_installed)
     dpg.configure_item("dev_mode_checkbox", show=is_installed)
     dpg.configure_item("local_mode_checkbox", show=is_installed)
+    dpg.configure_item("hide_console_checkbox", show=is_installed)
+    dpg.configure_item("no_ui_checkbox", show=is_installed)
     dpg.configure_item("button", label="Start ETS2LA" if is_installed else "Install ETS2LA", callback=start_app if is_installed else install_app, show=True)
     dpg.configure_item("remove_button", show=is_installed)
+    dpg.configure_item("console_button", show=is_installed)
+    dpg.configure_item("download_server", show=not is_installed)
 
 
-with dpg.window(tag="Window", no_title_bar=True, no_resize=True, no_move=True, no_collapse=True, no_close=True, no_background=True) as window:
+with dpg.window(tag="Window", no_title_bar=True, no_resize=True, no_move=True, no_collapse=True, no_close=True, no_background=True, no_scrollbar=True) as window:
     with dpg.group(horizontal=True, horizontal_spacing=20, indent=10):
-        dpg.add_checkbox(label="Dev Mode", tag="dev_mode_checkbox", callback=lambda s, a: print(f"Dev mode: {a}"), default_value=dev_mode)
-        dpg.add_checkbox(label="Local Mode", tag="local_mode_checkbox", callback=lambda s, a: print(f"Local mode: {a}"), default_value=local_mode)
+        dpg.add_checkbox(label="Dev Mode", tag="dev_mode_checkbox", default_value=False)
+        with dpg.tooltip("dev_mode_checkbox", hide_on_activity=True, delay=0.1):
+            dpg.add_text("Enable development mode. Will refresh plugins on code changes and display plugins marked as WIP.", wrap=200)
+            
+        dpg.add_spacer(width=27)
+        dpg.add_checkbox(label="Local Mode", tag="local_mode_checkbox", default_value=False)
+        with dpg.tooltip("local_mode_checkbox", hide_on_activity=True, delay=0.1):
+            dpg.add_text("Will attempt to run the user interface locally. Requires NodeJS!", wrap=200)
+        
+    with dpg.group(horizontal=True, horizontal_spacing=20, indent=10):
+        dpg.add_checkbox(label="Hide Console", tag="hide_console_checkbox", default_value=False)
+        with dpg.tooltip("hide_console_checkbox", hide_on_activity=True, delay=0.1):
+            dpg.add_text("This will hide the console after the UI has been loaded.", wrap=200)
+            
+        dpg.add_spacer(width=6)
+        
+        dpg.add_checkbox(label="Use Browser", tag="no_ui_checkbox", default_value=False)
+        with dpg.tooltip("no_ui_checkbox", hide_on_activity=True, delay=0.1):
+            dpg.add_text("This will disable the inbuilt UI and open the app in a browser.", wrap=200)
     
     with dpg.group(indent=10):
-        dpg.add_spacer(height=10)
-        dpg.add_text(default_value="ETS2LA is not installed.", tag="installed_text")
-        dpg.add_button(label="Install ETS2LA", tag="button", callback=install_app, width=384 - 18 * 2)
-        dpg.add_button(label="Remove ETS2LA", tag="remove_button", callback=remove_app, width=384 - 18 * 2, show=False)
-        dpg.add_spacer(height=10)
+        dpg.add_text(default_value=f"ETS2LA will be installed to:\n{os.path.abspath(install_folder)}", tag="installed_text", show=not is_installed, wrap=384 - 18 * 2)
+        dpg.add_spacer(height=0, tag="progress_spacer")
         dpg.add_progress_bar(default_value=-1, overlay="Progress", tag="progress", show=False, width=384 - 18 * 2, height=26)
         dpg.add_progress_bar(default_value=-1, overlay="Progress", tag="step_progress", show=False, width=384 - 18 * 2, height=26)
+        dpg.add_spacer(height=10)
+        dpg.add_button(label="Install ETS2LA", tag="button", callback=install_app, width=384 - 18 * 2)
+        dpg.add_combo(label="", items=["Download from GitHub", "Download from GitLab", "Download from SourceForge"], tag="download_server", default_value=download_server, width=384 - 18 * 2)
+        with dpg.tooltip("download_server", hide_on_activity=True, delay=0.1):
+            dpg.add_text("People in places where GitHub is blocked should use GitLab or SourceForge instead.", wrap=200)
+        
+        dpg.add_button(label="Open Console", tag="console_button", callback=open_console, width=384 - 18 * 2, show=False)
+        dpg.add_spacer(height=30)
+        dpg.add_button(label="Remove ETS2LA", tag="remove_button", callback=remove_app, width=384 - 18 * 2, show=False)
         
     update_ui()  # Initial UI setup based on is_installed
 
@@ -249,6 +370,14 @@ if pywinstyles and os.name == "nt":
     print("Applying dark theme...")
     pywinstyles.apply_style(None, "dark")
 
-dpg.start_dearpygui()
+while dpg.is_dearpygui_running():
+    if state_start_time != 0 and state != " ":
+        dpg.set_viewport_title(f"{state} - {round(time.time() - state_start_time)}s")
+    elif state_start_time != 0 and state == " ":
+        dpg.set_viewport_title(" ")
+        state_start_time = 0
+        
+    dpg.render_dearpygui_frame()
+
 dpg.destroy_context()
 exit()
