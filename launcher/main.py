@@ -263,6 +263,7 @@ def remove_app():
 
         dpg.configure_item("remove_button", label="Uninstalling requirements...")
         os.system(f"pip uninstall -r {install_folder}/requirements.txt -y")
+        os.system(f"pip cache purge")
         dpg.configure_item("remove_button", label="Removing ETS2LA...")
         os.system(f"rmdir /s /q {install_folder}")
         dpg.configure_item("remove_button", label="Restoring launcher requirements...", show=True)
