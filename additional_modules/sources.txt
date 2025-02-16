@@ -1,0 +1,9 @@
+We need to include some modules inside of the app to support installation in 
+limited network environments. Places like China or Turkey.
+
+All rights to the modules in this folder belongs to their original creators!
+
+DearPyGui-Markdown-main
+-> https://github.com/IvanNazaruk/DearPyGui-Markdown
+-> IvanNazaruk, MIT License
+-> Reason for inclusion: No PyPi package available.
