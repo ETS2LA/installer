@@ -59,11 +59,7 @@ sourceforge_link = "https://git.code.sf.net/p/eurotrucksimulator2-laneassist/cod
 
 download_server = "GitHub"
 
-pages = [
-    "Welcome",
-    "SystemCheck",
-    "InstallOptions",
-]
+pages = [] # This will be populated at the end.
 
 try:
     git.Repo(install_folder)
@@ -200,31 +196,18 @@ class CloneProgress(git.RemoteProgress):
           percent = round((cur_count / max_count) * 100)
 
           if percent != self.last_percent:
-              ... #dpg.configure_item("progress", overlay=f"{self.last_message} {percent}%", default_value=percent / 100)
+              dpg.configure_item("cloning_progress", default_value=percent / 100, overlay=f"{percent}%")
+              dpg.configure_item("cloning_progress_text", default_value=f"{self.last_message}")
 
         # Reset percentage after each file:
         if op_code & (git.RemoteProgress.RECEIVING | git.RemoteProgress.COMPRESSING | git.RemoteProgress.RESOLVING):
             if cur_count == max_count and max_count > 0: # Check if the step is about to end
                 self.last_percent = 0
 
+
 def install_app():
     try:
         #dpg.configure_item("installed_text", default_value="We are now downloading the ETS2LA codebase. This will take a while depending on your internet.")
-
-        link = ""
-        download_server = dpg.get_value("download_server")
-        if download_server == "GitHub":
-            link = github_link
-        elif download_server == "GitLab":
-            link = gitlab_link
-        elif download_server == "SourceForge":
-            link = sourceforge_link
-
-        git.Repo.clone_from(link, install_folder, multi_options=[
-            " --depth=20",
-            " --branch=rewrite",
-            " --single-branch"
-        ], progress=CloneProgress())
         
         # Check that the repo actually got cloned
         if os.path.exists(install_folder):
@@ -246,6 +229,7 @@ def install_app():
     except Exception as e:
         print(f"Error during installation: {e}")
 
+
 def remove_app():
     try:
         #dpg.configure_item("remove_button", label="Uninstalling requirements...")
@@ -265,6 +249,7 @@ def remove_app():
        print(f"Error during removal: {e}")
        dpg.configure_item("button", enabled=True)
 
+
 def start_app():
     try:
         command = start_command
@@ -279,6 +264,7 @@ def start_app():
 
     except Exception as e:
         print(f"Error starting the app: {e}")
+   
         
 def open_console():
     try:
@@ -286,6 +272,7 @@ def open_console():
         print("Console opened in a separate process.")
     except Exception as e:
         print(f"Error opening the console: {e}")
+
 
 def on_resize(_ , position):
     width = position[0]
@@ -295,26 +282,43 @@ def on_resize(_ , position):
     dpg.set_item_pos("next", [width - 114, height - 80])
     dpg.set_item_pos("back", [18, height - 80])
     
-def turn_page(index: int, back_text: str = "Back", next_text: str = "Next"):
-    exiting_last_page = pages[index - 2] if index - 2 >= 0 else None
-    exiting_page = pages[index - 1] if index - 1 >= 0 else None
-    entering_page = pages[index]
-    next_page = pages[index + 1] if index + 1 < len(pages) else None
     
+def turn_page(index: int):
+    pages_list = list(pages.keys())
+    exiting_last_page = pages_list[index - 2] if index - 2 >= 0 else None
+    exiting_page = pages_list[index - 1] if index - 1 >= 0 else None
+    entering_page = pages_list[index]
+    next_page = pages_list[index + 1] if index + 1 < len(pages_list) else None
+        
+    next_text = pages[entering_page].get("next", "Next")
+    back_text = pages[entering_page].get("back", "Back")
+        
     dpg.configure_item(entering_page, show=True)
     
     if exiting_page:
         dpg.configure_item(exiting_page, show=False)
-        dpg.configure_item("back", label=back_text, callback=lambda: turn_page(index - 1, back_text, next_text), show=True)
+        dpg.configure_item("back", label=back_text, callback=lambda: turn_page(index - 1), show=True)
     else:
         dpg.configure_item("back", show=False)
         
     if next_page:
         dpg.configure_item(next_page, show=False)
-        dpg.configure_item("next", label=next_text, callback=lambda: turn_page(index + 1, back_text, next_text), show=True)
+        dpg.configure_item("next", label=next_text, callback=lambda: turn_page(index + 1), show=True)
     else:
         dpg.configure_item("next", show=False)
         
+    if pages[entering_page].get("update"):
+        pages[entering_page]["update"]()
+        
+        
+def hide_navigation():
+    dpg.configure_item("back", show=False)
+    dpg.configure_item("next", show=False)
+    
+def show_navigation():
+    dpg.configure_item("back", show=True)
+    dpg.configure_item("next", show=True)
+    
 
 with dpg.window(tag="Navigation", no_title_bar=True, no_resize=True, no_move=True, no_collapse=True, no_close=True, no_background=False, no_scrollbar=True, show=True, width=500, height=350) as window:
     dpg.add_button(label="Back", tag="back", callback=lambda: turn_page(0), width=80)
@@ -328,7 +332,7 @@ with dpg.window(tag="Welcome", no_title_bar=True, no_collapse=True, no_close=Tru
 
 
 with dpg.window(tag="SystemCheck", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
-    ram = psutil.virtual_memory().total / 1024 / 1024 / 1024
+    ram = round(psutil.virtual_memory().total / 1024 / 1024 / 1024)
     cores = psutil.cpu_count()
     space = psutil.disk_usage(os.path.abspath(os.sep)).free / 1024 / 1024 / 1024
 
@@ -337,12 +341,13 @@ with dpg.window(tag="SystemCheck", no_title_bar=True, no_collapse=True, no_close
         dpg_md.add_text(system_check_text, wrap=484 - 18 * 2)
         dpg.add_spacer(height=5)
         
+    with dpg.group(indent=3):
         if ram < 12:
             dpg_md.add_text("> **ERROR**:\nETS2LA requires 10GB of RAM or more.", wrap=484 - 18 * 2)
         elif ram < 16:
             dpg_md.add_text("> **WARNING**:\nETS2LA recommends 16GB of RAM or more.", wrap=484 - 18 * 2)
         else:
-            dpg_md.add_text(f"> RAM: {ram:.2f} GB -> **OK**", wrap=484 - 18 * 2)
+            dpg_md.add_text(f"> RAM: {ram:.0f} GB -> **OK**", wrap=484 - 18 * 2)
         
         if cores < 4:
             dpg_md.add_text("> **ERROR**:\nETS2LA requires 4 cores or more.", wrap=484 - 18 * 2)
@@ -368,7 +373,7 @@ with dpg.window(tag="InstallOptions", no_title_bar=True, no_collapse=True, no_cl
         with dpg.group(horizontal=True, horizontal_spacing=50):
             with dpg.group():
                 dpg.add_text("Download server:")
-                dpg.add_radio_button(["GitHub", "GitLab", "SourceForge"], tag="download_server", default_value=0)
+                dpg.add_radio_button(["GitHub", "GitLab", "SourceForge"], tag="download_server", default_value="GitHub")
                 
                 with dpg.tooltip("download_server", hide_on_activity=True, delay=0.1):
                     dpg.add_text("Choose the server to download the codebase from. GitHub is recommended, if you don't have access to it then use GitLab.", wrap=200)
@@ -376,13 +381,67 @@ with dpg.window(tag="InstallOptions", no_title_bar=True, no_collapse=True, no_cl
             with dpg.group():
                 dpg.add_text("Additional options:")
                 dpg.add_checkbox(label="Install with NVIDIA compatibility", tag="nvidia")
-                dpg.add_checkbox(label="Use Baidu PyPI mirror", tag="baidu_pypi")
+                dpg.add_checkbox(label="Use Tsinghua PyPI mirror", tag="tsinghua")
                 
                 with dpg.tooltip("nvidia", hide_on_activity=True, delay=0.1):
-                    dpg.add_text("If you have an NVIDIA GPU, you can choose download the NVIDIA compatible version of packages for better performance.\n\nNOTE: Requires at least 3gb of storage!", wrap=200)
-                with dpg.tooltip("baidu_pypi", hide_on_activity=True, delay=0.1):
-                    dpg.add_text("If you have trouble downloading the packages, you can use the Baidu mirror to download them instead.", wrap=200)
+                    dpg.add_text("If you have an NVIDIA GPU, you can choose download the NVIDIA compatible version of packages for better performance.\n\nNOTE: Requires at least 3gb of extra storage!", wrap=200)
+                with dpg.tooltip("tsinghua", hide_on_activity=True, delay=0.1):
+                    dpg.add_text("Tsinghua is a Chinese university that hosts it's own PyPI mirror. If you have issues connecting to the official PyPI servers please enable this.", wrap=200)
 
+def update_recap_page():
+    dpg.configure_item("install_location", default_value=f"{os.path.abspath(install_folder)}")
+    download_server_text = dpg.get_value("download_server") + " with Tsinghua PyPI mirror" if dpg.get_value("tsinghua") else dpg.get_value("download_server")
+    dpg.configure_item("download_server_text", default_value=f"{download_server_text}")
+    
+with dpg.window(tag="Recap", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
+    recap_text = open(f"{markdown_root}/recap.md", "r", encoding="utf-8").read()
+    with dpg.group(indent=10):
+        dpg_md.add_text(recap_text, wrap=484 - 18 * 2)
+        dpg.add_spacer(height=5)
+        
+        with dpg.group(horizontal=True, horizontal_spacing=50):
+            with dpg.group():
+                dpg_md.add_text_bold("Install location:")
+                dpg.add_text(os.path.abspath(install_folder), tag="install_location")
+                dpg_md.add_text_bold("Download server:")
+                dpg.add_text("GitHub", tag="download_server_text")
+    
+def update_cloning_page():
+    hide_navigation()
+    dpg.render_dearpygui_frame() # Render the markdown
+    
+    link = ""
+    download_server = dpg.get_value("download_server")
+    if download_server == "GitHub":
+        link = github_link
+    elif download_server == "GitLab":
+        link = gitlab_link
+    elif download_server == "SourceForge":
+        link = sourceforge_link
+
+    git.Repo.clone_from(link, install_folder, multi_options=[
+        " --depth=20",
+        " --branch=rewrite",
+        " --single-branch"
+    ], progress=CloneProgress())
+    
+    start_time = time.time()
+    wait_time = 5
+    while True:
+        time.sleep(0.1)
+        time_till_start = round(time.time() - start_time)
+        dpg.configure_item("cloning_progress_text", default_value=f"Done! Continuing in {wait_time - time_till_start} seconds...")
+        if time_till_start >= wait_time:
+            break
+    
+with dpg.window(tag="Cloning", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
+    cloning_text = open(f"{markdown_root}/cloning.md", "r", encoding="utf-8").read()
+    with dpg.group(indent=10):
+        dpg_md.add_text_bold(cloning_text.split("\n")[0].replace("*", ""))
+        dpg.add_text(cloning_text.split("\n")[1], wrap=484 - 18 * 2)
+        dpg.add_spacer(height=5)
+        dpg.add_progress_bar(tag="cloning_progress", overlay="", default_value=0, width=484 - 18 * 2)
+        dpg.add_text("Cloning...", tag="cloning_progress_text")
     
 with dpg.theme() as global_theme:
     with dpg.theme_component(dpg.mvAll):
@@ -391,6 +450,20 @@ with dpg.theme() as global_theme:
         dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (37, 37, 38), category=dpg.mvThemeCat_Core)
         dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 5, category=dpg.mvThemeCat_Core)
 
+
+pages = {
+    "Welcome": {},
+    "SystemCheck": {},
+    "InstallOptions": {},
+    "Recap": {
+        "update": update_recap_page,
+        "next": "Install",
+    },
+    "Cloning": {
+        "update": update_cloning_page,
+        "next": "Continue"
+    },
+}
 
 dpg.bind_theme(global_theme)
 dpg.set_viewport_resize_callback(on_resize)
