@@ -1,2 +1,0 @@
-**Confirm Installation**
-These are the options you've selected. Please note that you cannot change the installation path. If you want to install to a different location then please move the installer folder itself.

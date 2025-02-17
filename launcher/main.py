@@ -97,6 +97,9 @@ def get_readable_name(module: str):
             index = module.index(char)
             break
         
+    if index == 0:
+        return module
+        
     return module[:index]
 
 # Match a package name to a line in the requirements file to get the progress.
@@ -113,6 +116,10 @@ def pip_install_with_progress(requirements_file_path):
     command = ["pip", "install", "-r", requirements_file_path, "--no-cache-dir", 
                "--no-warn-script-location", "--disable-pip-version-check", 
                "--progress-bar", "raw"]
+    
+    if dpg.get_value("tsinghua"):
+        command += ["-i", "https://pypi.tuna.tsinghua.edu.cn/simple"]
+        
     try:
         lines = open(requirements_file_path, "r").readlines()
         count = len(lines)
@@ -126,42 +133,47 @@ def pip_install_with_progress(requirements_file_path):
             sys.stdout.write(output)
             
             if "Progress" in output:
-                #dpg.configure_item(step_progress, show=True)
                 output = str(output.strip()).replace("Progress ", "").split(" of ")
                 if len(output) == 2:
                     TotalSize = output[1]
                     DownloadedSize = output[0]
                     try:
                         percentage = round((int(DownloadedSize) / int(TotalSize)) * 100)
-                        #dpg.configure_item(step_progress, overlay=f"Downloading {percentage}%", default_value=percentage / 100)
+                        dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Collecting {get_readable_name(current_module)} {percentage}%")
                     except ValueError:
                         ...
-                        #dpg.configure_item(step_progress, overlay=f"Downloading", default_value=0)
             
-            elif "Downloading" in output and "metadata" not in output:
-                current_module = output.split("Downloading ")[1].strip()
-                #dpg.configure_item(progress_tag, overlay=f"{line}/{count} - Collecting {get_readable_name(current_module)}", default_value=int(line)/int(count))
+            elif "Downloading" in output and "metadata" not in output and "https://" not in output:
+                module = output.split("Downloading ")[1].strip()
+                if module != "":
+                    current_module = module 
+                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Collecting {get_readable_name(current_module)}")
+                      
+            elif "Building wheel for " in output:
+                module = output.split("Building wheel for ")[1].split(" (setup.py)")[0].strip()
+                if module != "":
+                    current_module = module
+                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Building wheel for {get_readable_name(current_module)}")
                         
             elif "Installing build dependencies: started" in output:
-                ...
-                #dpg.configure_item(step_progress, show=False)
-                #dpg.configure_item(progress_tag, overlay=f"{line}/{count} - Installing {get_readable_name(current_module)} build dependencies", default_value=int(line)/int(count))
+                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Installing {get_readable_name(current_module)} build dependencies")
                         
             elif "Collecting" in output:
-                #dpg.configure_item(step_progress, show=False)
                 current_module = output.split("Collecting ")[1].split(" ")[0].strip()
-                #dpg.configure_item(progress_tag, overlay=f"{line}/{count} - Collecting {get_readable_name(current_module)}", default_value=int(line)/int(count))
+                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Collecting {get_readable_name(current_module)}")
                 
             elif "already satisfied" in output:
-                #dpg.configure_item(step_progress, show=False)
                 current_module = output.split("Requirement already satisfied: ")[1].split(" in ")[0].strip()
-                #dpg.configure_item(progress_tag, overlay=f"{line}/{count} - Already satisfied {get_readable_name(current_module)}", default_value=int(line)/int(count))
-
+                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Already satisfied {get_readable_name(current_module)}")
+                
             elif "Installing collected packages" in output:
-                ...
-                #dpg.configure_item(step_progress, show=False)
-                #dpg.configure_item(text_tag, default_value="DO NOT CLOSE THIS WINDOW.\nThis step will take up to 30 minutes!")
-                #dpg.configure_item(progress_tag, overlay="Installing packages...", default_value=-1)
+                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"Installing collected Python packages.\nThis can take up to 30 minutes.")
 
             index = get_index(lines, get_readable_name(current_module))
             if index != -1 and index != 1 and index != 0:
@@ -169,7 +181,6 @@ def pip_install_with_progress(requirements_file_path):
                     line = index
 
         if process.returncode == 0 or process.returncode == None:
-            #dpg.configure_item(progress_tag, overlay="Install Finished!")
             ...
         else:
             #dpg.configure_item(progress_tag, overlay="Install Failed!")
@@ -193,11 +204,11 @@ class CloneProgress(git.RemoteProgress):
             self.last_message = message
         
         if max_count is not None:
-          percent = round((cur_count / max_count) * 100)
+            percent = round((cur_count / max_count) * 100)
 
-          if percent != self.last_percent:
-              dpg.configure_item("cloning_progress", default_value=percent / 100, overlay=f"{percent}%")
-              dpg.configure_item("cloning_progress_text", default_value=f"{self.last_message}")
+            if percent != self.last_percent:
+                dpg.configure_item("cloning_progress", default_value=percent / 100, overlay=f"{percent}%")
+                dpg.configure_item("cloning_progress_text", default_value=f"{self.last_message}")
 
         # Reset percentage after each file:
         if op_code & (git.RemoteProgress.RECEIVING | git.RemoteProgress.COMPRESSING | git.RemoteProgress.RESOLVING):
@@ -292,18 +303,26 @@ def turn_page(index: int):
         
     next_text = pages[entering_page].get("next", "Next")
     back_text = pages[entering_page].get("back", "Back")
+    print(f"Turning page: {entering_page}")
+    print(f"Back_text: {back_text}")
         
     dpg.configure_item(entering_page, show=True)
     
     if exiting_page:
         dpg.configure_item(exiting_page, show=False)
-        dpg.configure_item("back", label=back_text, callback=lambda: turn_page(index - 1), show=True)
+        if back_text != "":
+            dpg.configure_item("back", label=back_text, callback=lambda: turn_page(index - 1), show=True)
+        else:
+            dpg.configure_item("back", show=False)
     else:
         dpg.configure_item("back", show=False)
         
     if next_page:
         dpg.configure_item(next_page, show=False)
-        dpg.configure_item("next", label=next_text, callback=lambda: turn_page(index + 1), show=True)
+        if next_text != "":
+            dpg.configure_item("next", label=next_text, callback=lambda: turn_page(index + 1), show=True)
+        else:
+            dpg.configure_item("next", show=False)
     else:
         dpg.configure_item("next", show=False)
         
@@ -394,21 +413,24 @@ def update_recap_page():
     dpg.configure_item("download_server_text", default_value=f"{download_server_text}")
     
 with dpg.window(tag="Recap", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
-    recap_text = open(f"{markdown_root}/recap.md", "r", encoding="utf-8").read()
     with dpg.group(indent=10):
-        dpg_md.add_text(recap_text, wrap=484 - 18 * 2)
-        dpg.add_spacer(height=5)
-        
         with dpg.group(horizontal=True, horizontal_spacing=50):
             with dpg.group():
                 dpg_md.add_text_bold("Install location:")
                 dpg.add_text(os.path.abspath(install_folder), wrap=484 - 18 * 2, tag="install_location")
+                dpg.add_spacer(height=5)
                 dpg_md.add_text_bold("Download server:")
                 dpg.add_text("GitHub", tag="download_server_text")
+                
+                with dpg.tooltip("install_location", hide_on_activity=True, delay=0.1):
+                    dpg.add_text("To change the install location please move the folder with start.bat", wrap=200)
     
 def update_cloning_page():
     hide_navigation()
     dpg.render_dearpygui_frame() # Render the markdown
+    
+    if os.path.exists(install_folder):
+        os.system(f"rmdir /s /q {install_folder}")
     
     link = ""
     download_server = dpg.get_value("download_server")
@@ -426,13 +448,15 @@ def update_cloning_page():
     ], progress=CloneProgress())
     
     start_time = time.time()
-    wait_time = 5
+    wait_time = 3
     while True:
         time.sleep(0.1)
         time_till_start = round(time.time() - start_time)
         dpg.configure_item("cloning_progress_text", default_value=f"Done! Continuing in {wait_time - time_till_start} seconds...")
         if time_till_start >= wait_time:
             break
+        
+    turn_page(5)
     
 with dpg.window(tag="Cloning", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
     cloning_text = open(f"{markdown_root}/cloning.md", "r", encoding="utf-8").read()
@@ -442,6 +466,23 @@ with dpg.window(tag="Cloning", no_title_bar=True, no_collapse=True, no_close=Tru
         dpg.add_spacer(height=5)
         dpg.add_progress_bar(tag="cloning_progress", overlay="", default_value=0, width=484 - 18 * 2)
         dpg.add_text("Cloning...", tag="cloning_progress_text")
+        
+def update_requirements_page():
+    hide_navigation()
+    dpg.render_dearpygui_frame() # Render the markdown
+    pip_install_with_progress(f"{install_folder}/requirements.txt")
+    dpg.configure_item("requirements_progress_text", default_value="Done!")
+    dpg.configure_item("requirements_progress", default_value=1)
+    dpg.configure_item("next", show=True)
+        
+with dpg.window(tag="Requirements", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
+    requirements_text = open(f"{markdown_root}/requirements.md", "r", encoding="utf-8").read()
+    with dpg.group(indent=10):
+        dpg_md.add_text_bold(requirements_text.split("\n")[0].replace("*", ""))
+        dpg.add_text(requirements_text.split("\n")[1], wrap=484 - 18 * 2)
+        dpg.add_spacer(height=5)
+        dpg.add_progress_bar(tag="requirements_progress", overlay="", default_value=0, width=484 - 18 * 2)
+        dpg.add_text("Contacting Server...", tag="requirements_progress_text")
     
 with dpg.theme() as global_theme:
     with dpg.theme_component(dpg.mvAll):
@@ -463,6 +504,11 @@ pages = {
         "update": update_cloning_page,
         "next": "Continue"
     },
+    "Requirements": {
+        "update": update_requirements_page,
+        "back": "",
+        "next": "Finish"
+    }
 }
 
 dpg.bind_theme(global_theme)
