@@ -7,6 +7,8 @@ if exist "%git_extract_path%" (
 echo.
 echo.
 echo.
+echo.
+echo.
 echo Downloading Git from GitHub. Expect a file size of around 63000000 bytes (63 MB)...
 powershell -Command "Invoke-WebRequest -Uri '%git_github_url%' -OutFile '%git_save_path%'"
 if %errorlevel% neq 0 (

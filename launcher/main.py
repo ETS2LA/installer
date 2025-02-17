@@ -402,7 +402,7 @@ with dpg.window(tag="Recap", no_title_bar=True, no_collapse=True, no_close=True,
         with dpg.group(horizontal=True, horizontal_spacing=50):
             with dpg.group():
                 dpg_md.add_text_bold("Install location:")
-                dpg.add_text(os.path.abspath(install_folder), tag="install_location")
+                dpg.add_text(os.path.abspath(install_folder), wrap=484 - 18 * 2, tag="install_location")
                 dpg_md.add_text_bold("Download server:")
                 dpg.add_text("GitHub", tag="download_server_text")
     
