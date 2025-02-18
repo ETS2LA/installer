@@ -15,7 +15,3 @@ echo.
 echo Pip Version:
 %python_extract_path%\python.exe -m pip --version
 echo.
-
-echo Pip Packages:
-%python_extract_path%\python.exe -m pip list
-echo.
