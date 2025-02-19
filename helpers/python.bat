@@ -37,7 +37,7 @@ if %errorlevel% neq 0 (
 echo ^> Done.
 echo Installing pip...
 
-"%python_extract_path%\python.exe" "%pip_save_path%" >nul 2>&1
+"%python_extract_path%\python.exe" "%pip_save_path%"
 
 echo ^> Done.
 echo Preparing python...
@@ -50,23 +50,19 @@ if exist "%pth_file_path%" (
     pause
 )
 
-if exist "%git_save_path%" (
-    del "%git_save_path%"
-)
-
-if exist "%PythonSavePath%" (
-    del "%PythonSavePath%"
+if exist "%python_save_path%" (
+    del "%python_save_path%"
 )
 
 :: Install wheel, setuptools and poetry in addition to the launcher requirements
-if %USE_TSINGHUA%%==1 (
+if "%USE_TSINGHUA%"=="1" (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     echo Downloading launcher requirements...
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     echo Installing DearPyGui-Markdown...
-    "%python_extract_path%\python.exe" -m pip install -e additional_modules/DearPyGui-Markdown-main -i https://pypi.tuna.tsinghua.edu.cn/simple
+    "%python_extract_path%\python.exe" -m pip install -e "%dpg_markdown%" -i https://pypi.tuna.tsinghua.edu.cn/simple
     
 ) else (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry
@@ -75,7 +71,7 @@ if %USE_TSINGHUA%%==1 (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython
 
     echo Installing DearPyGui-Markdown...
-    "%python_extract_path%\python.exe" -m pip install -e additional_modules/DearPyGui-Markdown-main
+    "%python_extract_path%\python.exe" -m pip install -e "%dpg_markdown%"
 )
 
 echo ^> Done.

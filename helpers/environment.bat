@@ -17,6 +17,9 @@ set "python_extract_path=%cd%\system\python"
 
 set "pth_file_path=%python_extract_path%\python312._pth"
 
+:: Additional Modules
+set "dpg_markdown=%cd%\additional_modules\DearPyGui-Markdown-main"
+
 :: Pip
 set "pip_url=https://bootstrap.pypa.io/get-pip.py"
 set "pip_save_path=%python_extract_path%\get-pip.py"

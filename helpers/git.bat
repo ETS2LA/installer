@@ -27,4 +27,8 @@ if exist "%git_extract_path%" (
 
 %git_save_path%  -y -o "%git_extract_path%" >nul 2>&1
 
+if exist "%git_save_path%" (
+    del "%git_save_path%"
+)
+
 echo ^> Done.

@@ -88,25 +88,34 @@ dpg.render_dearpygui_frame()
 
 # Convert a package name to a readable name that (hopefully) matches the package name.
 def get_readable_name(module: str):
-    delimiters = ["-", "_", ".", " ", "=", ">", "<", "!", "?", ":", ";", "{", "}", 
+    delimiters = [".", " ", "=", ">", "<", "!", "?", ":", ";", "{", "}", 
                   "[", "]", "(", ")", "|", "&", "*", "^", "%", "$", "#", "@", "~", 
                   "`", "'", '"']
     index = 0
     for char in module:
-        if char in delimiters:
+        if char in delimiters or char.isdigit():
             index = module.index(char)
             break
         
     if index == 0:
         return module
         
-    return module[:index]
+    name = module[:index]
+    if name[-1] == "-" or name[-1] == "_":
+        name = name[:-1]
+        
+    return name
 
 # Match a package name to a line in the requirements file to get the progress.
 def get_index(lines: list[str], target: str):
     index = 0
     for line in lines:
-        if target.lower() in line.lower() or target.lower() == line.lower():
+        test_target = target.replace("-", "_")
+        if test_target.lower() in line.lower() or test_target.lower() == line.lower():
+            return index
+        
+        test_target = target.replace("_", "-")
+        if test_target.lower() in line.lower() or test_target.lower() == line.lower():
             return index
         index += 1
     return -1
@@ -117,68 +126,119 @@ def pip_install_with_progress(requirements_file_path):
                "--no-warn-script-location", "--disable-pip-version-check", 
                "--progress-bar", "raw"]
     
+    index_urls = []
+    
+    if dpg.get_value("nvidia"):
+        index_urls += ["https://download.pytorch.org/whl/cu126"]
     if dpg.get_value("tsinghua"):
-        command += ["-i", "https://pypi.tuna.tsinghua.edu.cn/simple"]
+        index_urls += ["https://pypi.tuna.tsinghua.edu.cn/simple"]
+    else:
+        index_urls += ["https://pypi.org/simple"] # Default index.
+        
+    if len(index_urls) == 2:
+        # Pytorch index first to download the cuda version if available.
+        command += ["--index-url", index_urls[0], "--extra-index-url", index_urls[1]]
+    elif len(index_urls) == 1:
+        command += ["--index-url", index_urls[0]]
         
     try:
         lines = open(requirements_file_path, "r").readlines()
         count = len(lines)
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        completed_lines = []
+        
         current_module = ""
-        line = 0
-
+        
+        last_progress_time = time.time()
+        last_downloaded_size = 0
+        download_speeds = []
+        
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        dpg.configure_item("requirements_progress_text", default_value="Gathering metadata...")
         while psutil.pid_exists(process.pid):
-            time.sleep(0.05)
             output = process.stdout.readline()
             sys.stdout.write(output)
             
             if "Progress" in output:
                 output = str(output.strip()).replace("Progress ", "").split(" of ")
                 if len(output) == 2:
-                    TotalSize = output[1]
-                    DownloadedSize = output[0]
+                    downloaded_size = int(output[0])
+                    total_size = int(output[1])
+                    
+                    if downloaded_size != last_downloaded_size:
+                        download_speeds.append((int(downloaded_size) - last_downloaded_size) / (time.time() - last_progress_time))
+                        if len(download_speeds) > 30:
+                            download_speeds.pop(0)
+                        
+                        last_downloaded_size = int(downloaded_size)
+                        last_progress_time = time.time()
+                    
                     try:
-                        percentage = round((int(DownloadedSize) / int(TotalSize)) * 100)
-                        dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Collecting {get_readable_name(current_module)} {percentage}%")
+                        percentage = round((downloaded_size / total_size) * 100)
+                        text = f"{len(completed_lines)}/{count} - Collecting {get_readable_name(current_module)} {percentage}%"
+                        if total_size > 5_000_000: # 5mb
+                            if len(download_speeds) == 0 or sum(download_speeds) == 0:
+                                text += "\nCalculating remaining time -"
+                            else:
+                                left = (total_size - downloaded_size) / (sum(download_speeds) / len(download_speeds))
+                                minutes = int(left / 60)
+                                seconds = int(left % 60)
+                                if seconds >= 0 and minutes >= 0:
+                                    text += f"\n{minutes}m {seconds}s remaining -"
+                                else:
+                                    text += "\nCalculating remaining time -"
+                                    
+                            text += f" {int(downloaded_size / 1_000_000)}mb/{int(total_size / 1_000_000)}mb"
+                            text += f" @ {(sum(download_speeds) / len(download_speeds)) / 1_000_000:.2f}mb/s"
+                            
+                        dpg.configure_item("requirements_progress_text", default_value=text)
                     except ValueError:
                         ...
             
             elif "Downloading" in output and "metadata" not in output and "https://" not in output:
                 module = output.split("Downloading ")[1].strip()
                 if module != "":
+                    last_downloaded_size = 0
+                    download_speeds = [0]
                     current_module = module 
-                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
-                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Collecting {get_readable_name(current_module)}")
-                      
+                dpg.configure_item("requirements_progress", default_value=int(len(completed_lines))/int(count), overlay=f"{len(completed_lines)/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{len(completed_lines)}/{count} - Collecting {get_readable_name(current_module)}")
+                
+            elif "Downloading" in output and "metadata" not in output and "download.pytorch.org" in output:
+                # Hard code to downloading torch
+                current_module = "torch"
+                download_speeds = [0]
+                last_downloaded_size = 0
+                dpg.configure_item("requirements_progress", default_value=int(len(completed_lines))/int(count), overlay=f"{len(completed_lines)/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{len(completed_lines)}/{count} - Collecting {get_readable_name(current_module)}")
+            
+            elif "Downloading" in output and "metadata" in output:
+                module = output.split("Downloading ")[1].strip()
+                dpg.configure_item("requirements_progress_text", default_value=f"Gathering {get_readable_name(module)} metadata")   
+            
             elif "Building wheel for " in output:
                 module = output.split("Building wheel for ")[1].split(" (setup.py)")[0].strip()
                 if module != "":
                     current_module = module
-                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
-                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Building wheel for {get_readable_name(current_module)}")
+                dpg.configure_item("requirements_progress", default_value=int(len(completed_lines))/int(count), overlay=f"{len(completed_lines)/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{len(completed_lines)}/{count} - Building wheel for {get_readable_name(current_module)}")
                         
             elif "Installing build dependencies: started" in output:
-                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
-                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Installing {get_readable_name(current_module)} build dependencies")
+                dpg.configure_item("requirements_progress", default_value=int(len(completed_lines))/int(count), overlay=f"{len(completed_lines)/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{len(completed_lines)}/{count} - Installing {get_readable_name(current_module)} build dependencies")
                         
-            elif "Collecting" in output:
-                current_module = output.split("Collecting ")[1].split(" ")[0].strip()
-                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
-                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Collecting {get_readable_name(current_module)}")
-                
             elif "already satisfied" in output:
                 current_module = output.split("Requirement already satisfied: ")[1].split(" in ")[0].strip()
-                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
-                dpg.configure_item("requirements_progress_text", default_value=f"{line}/{count} - Already satisfied {get_readable_name(current_module)}")
+                dpg.configure_item("requirements_progress", default_value=int(len(completed_lines))/int(count), overlay=f"{len(completed_lines)/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress_text", default_value=f"{len(completed_lines)}/{count} - Already satisfied {get_readable_name(current_module)}")
                 
             elif "Installing collected packages" in output:
-                dpg.configure_item("requirements_progress", default_value=int(line)/int(count), overlay=f"{line/count * 100:.0f}%")
+                dpg.configure_item("requirements_progress", default_value=int(len(completed_lines))/int(count), overlay=f"{(count-1)/count * 100:.0f}%")
                 dpg.configure_item("requirements_progress_text", default_value=f"Installing collected Python packages.\nThis can take up to 30 minutes.")
 
             index = get_index(lines, get_readable_name(current_module))
-            if index != -1 and index != 1 and index != 0:
-                if index > line:
-                    line = index
+            if index != -1:
+                if index not in completed_lines:
+                    completed_lines.append(index)
 
         if process.returncode == 0 or process.returncode == None:
             ...
@@ -189,6 +249,8 @@ def pip_install_with_progress(requirements_file_path):
         
     except Exception as e:
        print(f"Error during installation: {e}")
+       import traceback
+       traceback.print_exc()
 
 # Git progress handler.
 class CloneProgress(git.RemoteProgress):
@@ -472,7 +534,7 @@ def update_requirements_page():
     dpg.render_dearpygui_frame() # Render the markdown
     pip_install_with_progress(f"{install_folder}/requirements.txt")
     dpg.configure_item("requirements_progress_text", default_value="Done!")
-    dpg.configure_item("requirements_progress", default_value=1)
+    dpg.configure_item("requirements_progress", default_value=1, overlay="100%")
     dpg.configure_item("next", show=True)
         
 with dpg.window(tag="Requirements", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
