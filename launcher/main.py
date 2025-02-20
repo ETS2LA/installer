@@ -549,14 +549,14 @@ with dpg.window(tag="Main", no_title_bar=True, no_collapse=True, no_close=True, 
     main_text = open(f"{markdown_root}/main.md", "r", encoding="utf-8").read()
     with dpg.group(indent=10):
         dpg_md.add_text(main_text, wrap=484 - 18 * 2)
-        dpg.add_spacer(height=120)
-        dpg.add_button(tag="start_button", label="Start ETS2LA", callback=start_app, width=484 - 18 * 2)
+        dpg.add_spacer(height=100)
+        dpg.add_button(tag="start_button", label="Start ETS2LA", callback=start_app, width=484 - 18 * 2, height=30)
         
         dpg.add_spacer(height=5)
         with dpg.group(horizontal=True, horizontal_spacing=5):
-            remove = dpg.add_button(label="Remove ETS2LA", callback=lambda: None, width=(484 - 18 * 2) / 2 - 5 / 2)
-            settings_button = dpg.add_button(label="Settings", callback=lambda: dpg.configure_item("Settings", show=True), width=(484 - 18 * 2) / 2 - 5 / 2)
-        console = dpg.add_button(label="Open Console", callback=open_console, width=484 - 18 * 2)
+            remove = dpg.add_button(label="Remove ETS2LA", callback=lambda: None, width=(484 - 18 * 2) / 2 - 5 / 2, height=30)
+            settings_button = dpg.add_button(label="Settings", callback=lambda: dpg.configure_item("Settings", show=True), width=(484 - 18 * 2) / 2 - 5 / 2, height=30)
+        console = dpg.add_button(label="Open Console", callback=open_console, width=484 - 18 * 2, height=30)
         
         dpg.bind_item_theme(remove, destructive_button_theme)
         dpg.bind_item_theme(settings_button, secondary_button_theme)
