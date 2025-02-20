@@ -1,46 +1,11 @@
-#region Imports
-import subprocess
-import threading
-import time
 import sys
 import os
+sys.path.append(os.path.dirname(__file__))
 
-try:
-    import psutil
-except:
-    os.system("pip install psutil")
-    import psutil
-
-try:
-    import dearpygui.dearpygui as dpg
-except:
-    os.system("pip install dearpygui")
-    import dearpygui.dearpygui as dpg
-
-try:
-    import pywinstyles
-except:
-    try:
-        os.system("pip install pywinstyles")
-        import pywinstyles
-    except:
-        pywinstyles = None
-
-try:
-    import git
-except:
-    os.system("pip install GitPython")
-    import git
-
-try:
-    import DearPyGui_Markdown as dpg_md
-except:
-    os.system("pip install -e additional_modules/DearPyGui-Markdown-main")
-    print("\n-> PLEASE RESTART THE LAUNCHER TO APPLY THE CHANGES!")
-    input("Press any key to exit...")
-    exit()
-
-#endregion
+from imports import *
+import subprocess
+import settings
+import time
 
 markdown_root = "launcher/pages"
 
@@ -49,9 +14,7 @@ console_command = "call helpers/environment.bat && cd app"
 
 install_folder = "app"
 is_installed = False
-
-sure_to_install = False
-sure_to_uninstall = False
+keep_running = True
 
 github_link = "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 gitlab_link = "https://gitlab.com/ETS2LA/ETS2LA"
@@ -213,7 +176,7 @@ def pip_install_with_progress(requirements_file_path):
             
             elif "Downloading" in output and "metadata" in output:
                 module = output.split("Downloading ")[1].strip()
-                dpg.configure_item("requirements_progress_text", default_value=f"Gathering {get_readable_name(module)} metadata")   
+                dpg.configure_item("requirements_progress_text", default_value=f"{len(completed_lines)}/{count} - Gathering {get_readable_name(module)} metadata")   
             
             elif "Building wheel for " in output:
                 module = output.split("Building wheel for ")[1].split(" (setup.py)")[0].strip()
@@ -326,10 +289,14 @@ def remove_app():
 def start_app():
     try:
         command = start_command
-        #if dpg.get_value("dev_mode_checkbox"):
-        #    command += " --dev"
-        #if dpg.get_value("local_mode_checkbox"):
-        #    command += " --local"
+        if dpg.get_value("dev_mode"):
+            command += " --dev"
+        if dpg.get_value("local_mode"):
+            command += " --local"
+        if dpg.get_value("ui_debug"):
+            command += " --debug"
+        if not dpg.get_value("show_console"):
+            command += " --hide-console"
             
         print(f"Starting app with command: {command}")
         os.system(f'start cmd /k "{command}"')
@@ -347,6 +314,41 @@ def open_console():
         print(f"Error opening the console: {e}")
 
 
+with dpg.theme() as global_theme:
+    with dpg.theme_component(dpg.mvAll):
+        # General Theming
+        dpg.add_theme_color(dpg.mvThemeCol_WindowBg, (32, 32, 32), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_Border, (32, 32, 32), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (37, 37, 38), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 5, category=dpg.mvThemeCat_Core)
+
+with dpg.theme() as modal_theme:
+    with dpg.theme_component(dpg.mvAll):
+        # General Theming
+        dpg.add_theme_color(dpg.mvThemeCol_WindowBg, (34, 34, 34), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_Border, (64, 64, 64), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (34, 34, 34), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 5, category=dpg.mvThemeCat_Core)
+
+        # Window Style
+        dpg.add_theme_color(dpg.mvThemeCol_TitleBg, (37, 37, 38), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_TitleBgActive, (37, 37, 38), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_TitleBgCollapsed, (37, 37, 38), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5, category=dpg.mvThemeCat_Core)
+        dpg.add_theme_style(dpg.mvStyleVar_WindowBorderSize, 1, category=dpg.mvThemeCat_Core)
+
+with dpg.theme() as secondary_button_theme:
+    with dpg.theme_component(dpg.mvButton):
+        dpg.add_theme_color(dpg.mvThemeCol_Button, (40, 40, 42), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (25, 60, 90), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (25, 60, 90), category=dpg.mvThemeCat_Core)
+
+with dpg.theme() as destructive_button_theme:
+    with dpg.theme_component(dpg.mvButton):
+        dpg.add_theme_color(dpg.mvThemeCol_Button, (40, 40, 42), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (90, 25, 25), category=dpg.mvThemeCat_Core)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (90, 25, 25), category=dpg.mvThemeCat_Core)
+
 def on_resize(_ , position):
     width = position[0]
     height = position[1]
@@ -354,19 +356,16 @@ def on_resize(_ , position):
     # Anchor buttons
     dpg.set_item_pos("next", [width - 114, height - 80])
     dpg.set_item_pos("back", [18, height - 80])
-    
-    
+
+
 def turn_page(index: int):
     pages_list = list(pages.keys())
-    exiting_last_page = pages_list[index - 2] if index - 2 >= 0 else None
     exiting_page = pages_list[index - 1] if index - 1 >= 0 else None
     entering_page = pages_list[index]
     next_page = pages_list[index + 1] if index + 1 < len(pages_list) else None
         
     next_text = pages[entering_page].get("next", "Next")
     back_text = pages[entering_page].get("back", "Back")
-    print(f"Turning page: {entering_page}")
-    print(f"Back_text: {back_text}")
         
     dpg.configure_item(entering_page, show=True)
     
@@ -545,14 +544,70 @@ with dpg.window(tag="Requirements", no_title_bar=True, no_collapse=True, no_clos
         dpg.add_spacer(height=5)
         dpg.add_progress_bar(tag="requirements_progress", overlay="", default_value=0, width=484 - 18 * 2)
         dpg.add_text("Contacting Server...", tag="requirements_progress_text")
-    
-with dpg.theme() as global_theme:
-    with dpg.theme_component(dpg.mvAll):
-        dpg.add_theme_color(dpg.mvThemeCol_WindowBg, (32, 32, 32), category=dpg.mvThemeCat_Core)
-        dpg.add_theme_color(dpg.mvThemeCol_Border, (32, 32, 32), category=dpg.mvThemeCat_Core)
-        dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (37, 37, 38), category=dpg.mvThemeCat_Core)
-        dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 5, category=dpg.mvThemeCat_Core)
 
+with dpg.window(tag="Main", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=350) as window:
+    main_text = open(f"{markdown_root}/main.md", "r", encoding="utf-8").read()
+    with dpg.group(indent=10):
+        dpg_md.add_text(main_text, wrap=484 - 18 * 2)
+        dpg.add_spacer(height=120)
+        dpg.add_button(tag="start_button", label="Start ETS2LA", callback=start_app, width=484 - 18 * 2)
+        
+        dpg.add_spacer(height=5)
+        with dpg.group(horizontal=True, horizontal_spacing=5):
+            remove = dpg.add_button(label="Remove ETS2LA", callback=lambda: None, width=(484 - 18 * 2) / 2 - 5 / 2)
+            settings_button = dpg.add_button(label="Settings", callback=lambda: dpg.configure_item("Settings", show=True), width=(484 - 18 * 2) / 2 - 5 / 2)
+        console = dpg.add_button(label="Open Console", callback=open_console, width=484 - 18 * 2)
+        
+        dpg.bind_item_theme(remove, destructive_button_theme)
+        dpg.bind_item_theme(settings_button, secondary_button_theme)
+        dpg.bind_item_theme(console, secondary_button_theme)
+                
+with dpg.window(tag="Starting", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
+    starting_text = open(f"{markdown_root}/starting.md", "r", encoding="utf-8").read()
+    with dpg.group(indent=10):
+        dpg_md.add_text(starting_text, wrap=484 - 18 * 2)
+
+def save_settings():
+    settings.set("dev_mode", dpg.get_value("dev_mode"))
+    settings.set("local_mode", dpg.get_value("local_mode"))
+    settings.set("show_console", dpg.get_value("show_console"))
+    settings.set("ui_debug", dpg.get_value("ui_debug"))
+    settings.set("start_on_launch", dpg.get_value("start_on_launch"))
+    settings.set("close_on_start", dpg.get_value("close_on_start"))
+    dpg.configure_item("Settings", show=False)
+
+with dpg.window(tag="Settings", no_scrollbar=True, show=False, no_resize=True, modal=True, no_title_bar=True, width=400, height=217) as window:
+    dpg.add_text("Startup Arguments:")
+    with dpg.group(horizontal=True, horizontal_spacing=50):    
+        dpg.add_checkbox(label="Development Mode", tag="dev_mode", default_value=settings.get("dev_mode", False))
+        dpg.add_checkbox(label="Local Mode", tag="local_mode", default_value=settings.get("local_mode", False))
+    with dpg.group(horizontal=True):    
+        dpg.add_checkbox(label="Show Console", tag="show_console", default_value=settings.get("show_console", True))
+        dpg.add_spacer(width=67)
+        dpg.add_checkbox(label="UI Debug", tag="ui_debug", default_value=settings.get("ui_debug", False))
+    
+    dpg.add_text("Launcher Settings:")
+    dpg.add_checkbox(label="Start ETS2LA automatically", tag="start_on_launch", default_value=settings.get("start_on_launch", False))
+    dpg.add_checkbox(label="Close after starting ETS2LA", tag="close_on_start", default_value=settings.get("close_on_start", True))
+    dpg.add_spacer(height=5)
+    dpg.add_button(label="Save", callback=lambda: save_settings(), width=400-16)
+    
+    # Tooltips
+    with dpg.tooltip("dev_mode", hide_on_activity=True, delay=0.1):
+        dpg.add_text("Development mode will enable additional features for testing. It will also disable some annoying warnings and checks and show WIP plugins.", wrap=180)
+    with dpg.tooltip("local_mode", hide_on_activity=True, delay=0.1):
+        dpg.add_text("Local mode will attempt to run the frontend locally on this computer.\nNOTE: REQUIRES NodeJS to be installed manually!", wrap=180)
+    with dpg.tooltip("show_console", hide_on_activity=True, delay=0.1):
+        dpg.add_text("Enables ETS2LA's console. Will show the information usually hidden from the user.", wrap=180)
+    with dpg.tooltip("ui_debug", hide_on_activity=True, delay=0.1):
+        dpg.add_text("Enables the browser developer features. This includes the inspector and the rest of the F12 menu.", wrap=180)
+        
+    with dpg.tooltip("start_on_launch", hide_on_activity=True, delay=0.1):
+        dpg.add_text("Automatically start ETS2LA when the launcher is run. The launcher will wait 5s for user input, if the button is pressed then the autostart is cancelled.", wrap=180)
+    with dpg.tooltip("close_on_start", hide_on_activity=True, delay=0.1):
+        dpg.add_text("Close the launcher after starting ETS2LA.", wrap=180)
+        
+dpg.bind_item_theme("Settings", modal_theme)
 
 pages = {
     "Welcome": {},
@@ -570,25 +625,62 @@ pages = {
         "update": update_requirements_page,
         "back": "",
         "next": "Finish"
-    }
+    },
+    "Main": {
+        "back": "",
+        "next": ""
+    },
+    "Starting": {}
 }
 
 dpg.bind_theme(global_theme)
 dpg.set_viewport_resize_callback(on_resize)
 on_resize(None, [500, 350])
 dpg.set_primary_window("Navigation", True)
+start_time = 0
 
 if not is_installed:
-    dpg.configure_item("back", show=False)
-    dpg.configure_item("Welcome", show=True)
+    turn_page(0)
+else:
+    start_time = time.time()
+    turn_page(6)
 
 if pywinstyles and os.name == "nt":
     print("Applying dark theme...")
     pywinstyles.change_header_color(None, "#202020")
     pywinstyles.change_title_color(None, "#909090")
 
-while dpg.is_dearpygui_running():    
+def cancel_autostart():
+    global start_time
+    start_time = 0
+    dpg.configure_item("start_button", label="Start ETS2LA", callback=start_app)
+
+was_shown = False
+while dpg.is_dearpygui_running() and keep_running:    
     dpg.render_dearpygui_frame()
+    
+    if dpg.is_item_shown("Settings"):
+        dpg.render_dearpygui_frame()
+        if not dpg.is_item_focused("Settings"):
+            dpg.configure_item("Settings", show=False)
+            
+        if not was_shown:
+            pywinstyles.change_header_color(None, "#232324")
+            was_shown = True
+            
+    if dpg.is_item_shown("Main") and start_time != 0:
+        time_left = 5 - (time.time() - start_time)
+        if time_left < 0: time_left = 0
+        
+        dpg.configure_item("start_button", label=f"Cancel Autostart ({time_left:.0f}s)", callback=cancel_autostart)
+        if time_left <= 0:
+            dpg.configure_item("start_button", label="Start ETS2LA", callback=start_app)
+            start_app()
+            start_time = 0
+            
+    elif was_shown:
+        pywinstyles.change_header_color(None, "#202020")
+        was_shown = False
 
 dpg.destroy_context()
 exit()

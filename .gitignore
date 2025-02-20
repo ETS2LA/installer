@@ -4,3 +4,10 @@
 # Ignore download folders
 system
 app
+
+# Ignore settings
+launcher/settings.json
+
+# Ignore download files
+PortableGit-2.47.1.2-64-bit.7z.exe
+Python-3.12.8.zip
