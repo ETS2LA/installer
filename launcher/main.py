@@ -296,7 +296,7 @@ def start_app():
         if dpg.get_value("ui_debug"):
             command += " --debug"
         if not dpg.get_value("show_console"):
-            command += " --hide-console"
+            command += " --no-console"
             
         print(f"Starting app with command: {command}")
         os.system(f'start cmd /k "{command}"')
