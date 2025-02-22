@@ -128,7 +128,10 @@ def pip_install_with_progress(requirements_file_path):
                     total_size = int(output[1])
                     
                     if downloaded_size != last_downloaded_size:
-                        download_speeds.append((int(downloaded_size) - last_downloaded_size) / (time.time() - last_progress_time))
+                        try:
+                            download_speeds.append((int(downloaded_size) - last_downloaded_size) / (time.time() - last_progress_time))
+                        except: pass
+                        
                         if len(download_speeds) > 30:
                             download_speeds.pop(0)
                         
