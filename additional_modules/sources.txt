@@ -7,3 +7,11 @@ DearPyGui-Markdown-main
 -> https://github.com/IvanNazaruk/DearPyGui-Markdown
 -> IvanNazaruk, MIT License
 -> Reason for inclusion: No PyPi package available.
+
+tkinter-standalone-main
+-> https://github.com/ChrisColeTech/tkinter-standalone
+-> ChrisColeTech, Apache-2.0 License
+-> Reason for inclusion: We need to add tkinter to our embedded python version. This makes it easy.
+-> Modifications: 
+--> Removed the ._pth files to allow for folder copying.
+--> Removed 3.10 and 3.11 files as those are not needed.

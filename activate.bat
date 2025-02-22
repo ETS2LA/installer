@@ -1,0 +1,1 @@
+cmd /K "call helpers\environment.bat"

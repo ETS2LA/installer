@@ -44,6 +44,7 @@ echo Preparing python...
 
 if exist "%pth_file_path%" (
     echo Lib\site-packages >> "%pth_file_path%"
+    echo DLLs >> "%pth_file_path%"
     powershell -Command "(gc '%pth_file_path%') -replace '#import site','import site' | Out-File -encoding ASCII '%pth_file_path%'"
 ) else (
     echo ERROR: File not found: %pth_file_path%
@@ -54,6 +55,12 @@ if exist "%python_save_path%" (
     del "%python_save_path%"
 )
 
+echo ^> Done.
+echo Copying tkinter...
+xcopy /E /Y "%tkinter_path%" "%python_extract_path%" >nul 2>&1
+echo ^> Done.
+
+echo Installing launcher requirements...
 :: Install wheel, setuptools and poetry in addition to the launcher requirements
 if "%USE_TSINGHUA%"=="1" (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry -i https://pypi.tuna.tsinghua.edu.cn/simple

@@ -17,6 +17,8 @@ set "python_extract_path=%cd%\system\python"
 
 set "pth_file_path=%python_extract_path%\python312._pth"
 
+set "tkinter_path=%cd%\additional_modules\tkinter-standalone-main\3.12\python_embedded"
+
 :: Additional Modules
 set "dpg_markdown=%cd%\additional_modules\DearPyGui-Markdown-main"
 
