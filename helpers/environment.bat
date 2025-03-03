@@ -28,25 +28,3 @@ set "pip_save_path=%python_extract_path%\get-pip.py"
 
 :: PATH
 set PATH=%cd%\system\git\bin;%cd%\system\python;%cd%\system\python\Scripts;%cd%\app;%PATH%
-
-if not exist %git_extract_path% (
-    if not exist %python_extract_path% (
-        echo.
-        echo -------------
-        echo Welcome!
-        echo This installer will now proceed with the following steps:
-        echo.
-        echo 1. Install Git
-        echo 2. Install Python and Pip
-        echo 3. Install the required packages for the launcher.
-        echo.
-        echo These steps will all be performed inside of the current folder.
-        echo We will not overwrite any existing installations you might currently have.
-        echo.
-        echo After installation is complete we will automatically start the launcher.
-        echo In the future when starting ETS2LA please use the same start.bat file.
-        echo -------------
-        echo.
-        pause
-    )
-)
