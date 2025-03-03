@@ -34,3 +34,9 @@ except:
     print("\n-> PLEASE RESTART THE LAUNCHER TO APPLY THE CHANGES!")
     input("Press any key to exit...")
     exit()
+    
+try:
+    import pygetwindow
+except:
+    os.system("pip install pygetwindow")
+    import pygetwindow

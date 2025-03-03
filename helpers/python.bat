@@ -60,13 +60,13 @@ echo Copying tkinter...
 xcopy /E /Y "%tkinter_path%" "%python_extract_path%" >nul 2>&1
 echo ^> Done.
 
-echo Installing launcher requirements...
+echo Downloading build requirements...
 :: Install wheel, setuptools and poetry in addition to the launcher requirements
 if "%USE_TSINGHUA%"=="1" (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     echo Downloading launcher requirements...
-    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython -i https://pypi.tuna.tsinghua.edu.cn/simple
+    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython pygetwindow -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     echo Installing DearPyGui-Markdown...
     "%python_extract_path%\python.exe" -m pip install -e "%dpg_markdown%" -i https://pypi.tuna.tsinghua.edu.cn/simple
@@ -75,7 +75,7 @@ if "%USE_TSINGHUA%"=="1" (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry
 
     echo Downloading launcher requirements...
-    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython
+    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython pygetwindow
 
     echo Installing DearPyGui-Markdown...
     "%python_extract_path%\python.exe" -m pip install -e "%dpg_markdown%"

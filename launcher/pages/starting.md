@@ -1,2 +1,2 @@
 **ETS2LA is starting**
-Please wait just a moment for the app to startup.
+Please wait just a moment for the app to startup. The launcher will close automatically after ETS2LA is ready. Closing this window before the app is initialized will not break anything.

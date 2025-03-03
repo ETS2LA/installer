@@ -19,4 +19,4 @@ echo Requirements are met, starting the app...
 
 python launcher/main.py
 
-echo ETS2LA has closed.
+echo The ETS2LA launcher has closed.

@@ -1,3 +1,6 @@
+# Developer warning: This code is horrible.
+# Please prepare bleach before entering.
+
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
@@ -25,8 +28,11 @@ download_server = "GitHub"
 pages = [] # This will be populated at the end.
 
 try:
-    git.Repo(install_folder)
-    is_installed = True
+    repo = git.Repo(install_folder)
+    if repo.active_branch == "":
+        is_installed = False
+    else:
+        is_installed = True
 except: pass
 
 dpg.create_context()
@@ -207,16 +213,20 @@ def pip_install_with_progress(requirements_file_path):
                     completed_lines.append(index)
 
         if process.returncode == 0 or process.returncode == None:
-            ...
+            return True
         else:
-            #dpg.configure_item(progress_tag, overlay="Install Failed!")
+            dpg.configure_item("requirements_progress_text", default_value="Error! The installation failed at some point.\nPlease take a screenshot of the console and share it with the developers!")
             print(f"Pip install failed with error code: {process.returncode}")
             print(f"Stderr: {process.stderr.read()}")
+            return False
+        return True
         
     except Exception as e:
-       print(f"Error during installation: {e}")
-       import traceback
-       traceback.print_exc()
+        dpg.configure_item("requirements_progress_text", default_value="Error! The installation failed at some point.\nPlease take a screenshot of the console and share it with the developers!")
+        print(f"Error during installation: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 # Git progress handler.
 class CloneProgress(git.RemoteProgress):
@@ -271,22 +281,22 @@ def install_app():
 
 def remove_app():
     try:
-        #dpg.configure_item("remove_button", label="Uninstalling requirements...")
+        dpg.configure_item("remove_button", label="Uninstalling...")
         os.system(f"pip uninstall -r {install_folder}/requirements.txt -y")
         os.system(f"pip cache purge")
-        #dpg.configure_item("remove_button", label="Removing ETS2LA...")
+        dpg.configure_item("remove_button", label="Removing ETS2LA...")
         os.system(f"rmdir /s /q {install_folder}")
-        #dpg.configure_item("remove_button", label="Restoring launcher requirements...", show=True)
+        dpg.configure_item("remove_button", label="Restoring launcher...", show=True)
         os.system("pip install wheel setuptools poetry dearpygui psutil")
 
         global is_installed
         is_installed = False
 
-        #dpg.configure_item("installed_text", default_value="Please restart the launcher.", show=True)
-
+        dpg.configure_item("Main", show=False)
+        turn_page(0)
     except Exception as e:
        print(f"Error during removal: {e}")
-       dpg.configure_item("button", enabled=True)
+       dpg.configure_item("remove_button", enabled=True)
 
 
 def start_app():
@@ -304,6 +314,9 @@ def start_app():
         print(f"Starting app with command: {command}")
         os.system(f'start cmd /k "{command}"')
         print("App started in a separate process.")
+        
+        if dpg.get_value("close_on_start"):
+            turn_page(7)
 
     except Exception as e:
         print(f"Error starting the app: {e}")
@@ -505,11 +518,17 @@ def update_cloning_page():
     elif download_server == "SourceForge":
         link = sourceforge_link
 
-    git.Repo.clone_from(link, install_folder, multi_options=[
-        " --depth=20",
-        " --branch=rewrite",
-        " --single-branch"
-    ], progress=CloneProgress())
+    try:
+        git.Repo.clone_from(link, install_folder, multi_options=[
+            " --depth=20",
+            " --branch=rewrite",
+            " --single-branch"
+        ], progress=CloneProgress())
+    except:
+        dpg.configure_item("cloning_progress_text", default_value=f"Error! Please check the console and your internet connection.\nYou can try a different provider to see if theirs works!")
+        if os.path.exists(install_folder):
+            os.system(f"rmdir /s /q {install_folder}")
+        return
     
     start_time = time.time()
     wait_time = 3
@@ -534,10 +553,13 @@ with dpg.window(tag="Cloning", no_title_bar=True, no_collapse=True, no_close=Tru
 def update_requirements_page():
     hide_navigation()
     dpg.render_dearpygui_frame() # Render the markdown
-    pip_install_with_progress(f"{install_folder}/requirements.txt")
-    dpg.configure_item("requirements_progress_text", default_value="Done!")
-    dpg.configure_item("requirements_progress", default_value=1, overlay="100%")
-    dpg.configure_item("next", show=True)
+    success = pip_install_with_progress(f"{install_folder}/requirements.txt")
+    if success:
+        dpg.configure_item("requirements_progress_text", default_value="Done!")
+        dpg.configure_item("requirements_progress", default_value=1, overlay="100%")
+        dpg.configure_item("next", show=True)
+    else:
+        ... # user is now stuck on this page and has to follow the text shown
         
 with dpg.window(tag="Requirements", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
     requirements_text = open(f"{markdown_root}/requirements.md", "r", encoding="utf-8").read()
@@ -557,18 +579,32 @@ with dpg.window(tag="Main", no_title_bar=True, no_collapse=True, no_close=True, 
         
         dpg.add_spacer(height=5)
         with dpg.group(horizontal=True, horizontal_spacing=5):
-            remove = dpg.add_button(label="Remove ETS2LA", callback=lambda: None, width=(484 - 18 * 2) / 2 - 5 / 2, height=30)
+            remove = dpg.add_button(label="Remove ETS2LA", tag="remove_button", callback=lambda: remove_app(), width=(484 - 18 * 2) / 2 - 5 / 2, height=30)
             settings_button = dpg.add_button(label="Settings", callback=lambda: dpg.configure_item("Settings", show=True), width=(484 - 18 * 2) / 2 - 5 / 2, height=30)
         console = dpg.add_button(label="Open Console", callback=open_console, width=484 - 18 * 2, height=30)
         
         dpg.bind_item_theme(remove, destructive_button_theme)
         dpg.bind_item_theme(settings_button, secondary_button_theme)
         dpg.bind_item_theme(console, secondary_button_theme)
+             
+def update_starting():
+    global keep_running
+    keep_running = False
+    print("Waiting for ETS2LA...")
+    while dpg.is_dearpygui_running():
+        dpg.render_dearpygui_frame()
+        windows = pygetwindow.getAllTitles()
+        for title in windows:
+            if "ETS2LA" in title:
+                print("Found ETS2LA")
+                return
+        time.sleep(0.5)
                 
 with dpg.window(tag="Starting", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
     starting_text = open(f"{markdown_root}/starting.md", "r", encoding="utf-8").read()
     with dpg.group(indent=10):
-        dpg_md.add_text(starting_text, wrap=484 - 18 * 2)
+        dpg_md.add_text_bold(starting_text.split("\n")[0].replace("*", ""))
+        dpg.add_text(starting_text.split("\n")[1], wrap=484 - 18 * 2)
 
 def save_settings():
     settings.set("dev_mode", dpg.get_value("dev_mode"))
@@ -633,7 +669,11 @@ pages = {
         "back": "",
         "next": ""
     },
-    "Starting": {}
+    "Starting": {
+        "update": update_starting,
+        "back": "",
+        "next": ""
+    }
 }
 
 dpg.bind_theme(global_theme)
@@ -659,7 +699,7 @@ def cancel_autostart():
     dpg.configure_item("start_button", label="Start ETS2LA", callback=start_app)
 
 was_shown = False
-while dpg.is_dearpygui_running() and keep_running:    
+while dpg.is_dearpygui_running() and keep_running:   
     dpg.render_dearpygui_frame()
     
     if dpg.is_item_shown("Settings"):
@@ -672,13 +712,16 @@ while dpg.is_dearpygui_running() and keep_running:
             was_shown = True
             
     if dpg.is_item_shown("Main") and start_time != 0:
-        time_left = 5 - (time.time() - start_time)
-        if time_left < 0: time_left = 0
-        
-        dpg.configure_item("start_button", label=f"Cancel Autostart ({time_left:.0f}s)", callback=cancel_autostart)
-        if time_left <= 0:
-            dpg.configure_item("start_button", label="Start ETS2LA", callback=start_app)
-            start_app()
+        if dpg.get_value("start_on_launch"):
+            time_left = 5 - (time.time() - start_time)
+            if time_left < 0: time_left = 0
+            
+            dpg.configure_item("start_button", label=f"Cancel Autostart ({time_left:.0f}s)", callback=cancel_autostart)
+            if time_left <= 0:
+                dpg.configure_item("start_button", label="Start ETS2LA", callback=start_app)
+                start_app()
+                start_time = 0
+        else:
             start_time = 0
             
     elif was_shown:
@@ -686,4 +729,4 @@ while dpg.is_dearpygui_running() and keep_running:
         was_shown = False
 
 dpg.destroy_context()
-exit()
+print("stopped")
