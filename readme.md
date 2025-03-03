@@ -1,1 +1,0 @@
-Installer for ETS2LA V2.0

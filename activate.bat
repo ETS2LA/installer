@@ -1,1 +1,1 @@
-cmd /K "cd venv && cd Scripts && activate && cd .. && cd .."
+cmd /K "call helpers\environment.bat"

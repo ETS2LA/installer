@@ -1,0 +1,2 @@
+**Welcome to the ETS2LA setup!**
+This setup will walk though the steps we need to perform to get ETS2LA installed correctly. If at any point you have problems then please contact us on [Discord](https://ets2la.com/discord) or create an issue on our [GitHub](https://github.com/ETS2LA/installer).
