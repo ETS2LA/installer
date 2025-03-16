@@ -4,7 +4,7 @@
 set "git_github_url=https://github.com/git-for-windows/git/releases/download/v2.47.1.windows.2/PortableGit-2.47.1.2-64-bit.7z.exe"
 set "git_sourceforge_url=https://cyfuture.dl.sourceforge.net/project/git-for-windows.mirror/v2.47.1.windows.2/PortableGit-2.47.1.2-64-bit.7z.exe?viasf=1"
 :: Mirror provided by NJU, see https://mirror.nju.edu.cn/ for more information
-:: Why no Tsinghua or BFSU mirror: it block my IP CIDR for "download large binary file too frequently"
+:: Why no Tsinghua or BFSU mirror: can block the download if used too much.
 set "git_tsinghua_url=https://mirror.nju.edu.cn/github-release/git-for-windows/git/Git for Windows v2.48.1.windows.1/PortableGit-2.48.1-64-bit.7z.exe"
 
 set git_save_path="%cd%\PortableGit.7z.exe"
@@ -14,8 +14,8 @@ set git_extract_path="%cd%\system\git"
 :: Python
 set "python_url=https://www.python.org/ftp/python/3.12.8/python-3.12.8-embed-amd64.zip"
 :: Mirror provided by NJU, see https://mirror.nju.edu.cn/ for more information
-:: Why no Tsinghua mirror: it didn't provide python releases mirror
-:: Why no USTC: it will trigger browser verification
+:: Why no Tsinghua mirror: it didn't provide python releases mirror.
+:: Why no USTC: it will trigger browser verification.
 set "python_tsinghua_url=https://mirror.nju.edu.cn/python/3.12.8/python-3.12.8-embed-amd64.zip"
 set "python_save_path=%cd%\Python-3.12.8.zip"
 

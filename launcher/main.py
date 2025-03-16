@@ -164,7 +164,8 @@ def pip_install_with_progress(requirements_file_path):
                                     text += "\nCalculating remaining time -"
                                     
                             text += f" {int(downloaded_size / 1_000_000)}mb/{int(total_size / 1_000_000)}mb"
-                            text += f" @ {(sum(download_speeds) / len(download_speeds)) / 1_000_000:.2f}mb/s"
+                            if len(download_speeds) > 0:
+                                text += f" @ {(sum(download_speeds) / len(download_speeds)) / 1_000_000:.2f}mb/s"
                             
                         dpg.configure_item("requirements_progress_text", default_value=text)
                     except ValueError:
@@ -481,7 +482,7 @@ with dpg.window(tag="InstallOptions", no_title_bar=True, no_collapse=True, no_cl
             with dpg.group():
                 dpg.add_text("Additional options:")
                 dpg.add_checkbox(label="Install with NVIDIA compatibility", tag="nvidia")
-                dpg.add_checkbox(label="Use Alibaba Cloud (also named as Aliyun) PyPI mirror and NJU PyTorch Mirror", tag="tsinghua")
+                dpg.add_checkbox(label="Use Aliyun and NJU mirrors.", tag="tsinghua")
                 
                 with dpg.tooltip("nvidia", hide_on_activity=True, delay=0.1):
                     dpg.add_text("If you have an NVIDIA GPU, you can choose download the NVIDIA compatible version of packages for better performance.\n\nNOTE: Requires at least 3gb of extra storage!", wrap=200)
@@ -490,7 +491,7 @@ with dpg.window(tag="InstallOptions", no_title_bar=True, no_collapse=True, no_cl
 
 def update_recap_page():
     dpg.configure_item("install_location", default_value=f"{os.path.abspath(install_folder)}")
-    download_server_text = dpg.get_value("download_server") + " with Tsinghua PyPI mirror" if dpg.get_value("tsinghua") else dpg.get_value("download_server")
+    download_server_text = dpg.get_value("download_server") + " with Aliyun and NJU mirrors" if dpg.get_value("tsinghua") else dpg.get_value("download_server")
     dpg.configure_item("download_server_text", default_value=f"{download_server_text}")
     
 with dpg.window(tag="Recap", no_title_bar=True, no_collapse=True, no_close=True, no_resize=True, no_move=True, no_background=True, no_scrollbar=True, show=False, width=500, height=270) as window:
