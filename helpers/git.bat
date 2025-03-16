@@ -26,7 +26,15 @@ if not exist %git_extract_path% (
     )
 )
 
-echo Downloading Git from GitHub. Expect a file size of around 63000000 bytes (63 MB)...
+if "%USE_TSINGHUA%"=="" (
+    echo Downloading Git from Github. Expect a file size of around 63000000 bytes ^(63 MB^)
+) else if "%USE_TSINGHUA%"=="1" (
+    echo Downloading Git from NJU mirror. Expect a file size of around 63000000 bytes ^(63 MB^)
+    set "git_github_url=%git_tsinghua_url%"
+) else (
+    echo Invalid mirror option: %USE_TSINGHUA%
+)
+
 echo %git_github_url%
 powershell -Command "Invoke-WebRequest -Uri '%git_github_url%' -OutFile '%git_save_path%'"
 if %errorlevel% neq 0 (

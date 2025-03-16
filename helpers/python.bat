@@ -63,13 +63,13 @@ echo ^> Done.
 echo Downloading build requirements...
 :: Install wheel, setuptools and poetry in addition to the launcher requirements
 if "%USE_TSINGHUA%"=="1" (
-    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
+    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry -i https://mirrors.aliyun.com/pypi/simple
 
     echo Downloading launcher requirements...
-    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython pygetwindow -i https://pypi.tuna.tsinghua.edu.cn/simple
+    "%python_extract_path%\python.exe" -m pip install --no-warn-script-location psutil dearpygui GitPython pygetwindow -i https://mirrors.aliyun.com/pypi/simple
 
     echo Installing DearPyGui-Markdown...
-    "%python_extract_path%\python.exe" -m pip install -e "%dpg_markdown%" -i https://pypi.tuna.tsinghua.edu.cn/simple
+    "%python_extract_path%\python.exe" -m pip install -e "%dpg_markdown%" -i https://mirrors.aliyun.com/pypi/simple
     
 ) else (
     "%python_extract_path%\python.exe" -m pip install --no-warn-script-location wheel setuptools poetry

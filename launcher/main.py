@@ -98,9 +98,13 @@ def pip_install_with_progress(requirements_file_path):
     index_urls = []
     
     if dpg.get_value("nvidia"):
-        index_urls += ["https://download.pytorch.org/whl/cu126"]
+        if dpg.get_value("tsinghua"):
+            # Mirror provided by NJU, see https://mirror.nju.edu.cn/ for more information.
+            index_urls += ["https://mirror.nju.edu.cn/pytorch/whl/cu126"]
+        else:
+            index_urls += ["https://download.pytorch.org/whl/cu126"]
     if dpg.get_value("tsinghua"):
-        index_urls += ["https://pypi.tuna.tsinghua.edu.cn/simple"]
+        index_urls += ["https://mirrors.aliyun.com/pypi/simple/"]
     else:
         index_urls += ["https://pypi.org/simple"] # Default index.
         
@@ -477,12 +481,12 @@ with dpg.window(tag="InstallOptions", no_title_bar=True, no_collapse=True, no_cl
             with dpg.group():
                 dpg.add_text("Additional options:")
                 dpg.add_checkbox(label="Install with NVIDIA compatibility", tag="nvidia")
-                dpg.add_checkbox(label="Use Tsinghua PyPI mirror", tag="tsinghua")
+                dpg.add_checkbox(label="Use Alibaba Cloud (also named as Aliyun) PyPI mirror and NJU PyTorch Mirror", tag="tsinghua")
                 
                 with dpg.tooltip("nvidia", hide_on_activity=True, delay=0.1):
                     dpg.add_text("If you have an NVIDIA GPU, you can choose download the NVIDIA compatible version of packages for better performance.\n\nNOTE: Requires at least 3gb of extra storage!", wrap=200)
                 with dpg.tooltip("tsinghua", hide_on_activity=True, delay=0.1):
-                    dpg.add_text("Tsinghua is a Chinese university that hosts it's own PyPI mirror. If you have issues connecting to the official PyPI servers please enable this.", wrap=200)
+                    dpg.add_text("Alibaba Cloud (also named as Aliyun) is a Chinese cloud service provider with its own PyPI mirror, while NJU is a Chinese university with its own PyTorch mirror. If you are having problems connecting to the official PyPI or PyTorch servers, enable this.", wrap=200)
 
 def update_recap_page():
     dpg.configure_item("install_location", default_value=f"{os.path.abspath(install_folder)}")
