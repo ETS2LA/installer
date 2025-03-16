@@ -164,8 +164,11 @@ def pip_install_with_progress(requirements_file_path):
                                     text += "\nCalculating remaining time -"
                                     
                             text += f" {int(downloaded_size / 1_000_000)}mb/{int(total_size / 1_000_000)}mb"
-                            if len(download_speeds) > 0:
+
+                            if (len(download_speeds) > 0):
                                 text += f" @ {(sum(download_speeds) / len(download_speeds)) / 1_000_000:.2f}mb/s"
+                            else:
+                                text += " @ 0mb/s"
                             
                         dpg.configure_item("requirements_progress_text", default_value=text)
                     except ValueError:
