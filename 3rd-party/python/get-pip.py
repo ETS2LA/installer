@@ -120,7 +120,14 @@ def bootstrap(tmpdir):
     # any user-requested packages from PyPI.
     from pip._internal.cli.main import main as pip_entry_point
     args = determine_pip_install_arguments()
-    sys.exit(pip_entry_point(args))
+    
+    exit_code = pip_entry_point(args)
+    # CHANGE START
+    print("Pip installed... continuing in 2 seconds...")
+    import time
+    time.sleep(2)
+    # CHANGE END
+    sys.exit(exit_code)
 
 
 def main():
@@ -28577,9 +28584,3 @@ LiQkY-wUMFLiWjY%g_kY%XwlP)h*<6ay3h000O8;7OWVR@7G2zXt#S8x;TmAOHXW0000000000q=EU{
 
 if __name__ == "__main__":
     main()
-    
-    # CHANGE START
-    print("Pip installed... continuing in 2 seconds...")
-    import time
-    time.sleep(2)
-    # CHANGE END
