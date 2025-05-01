@@ -97,9 +97,13 @@ with open("languages.nsh", "w", encoding="utf-8") as f:
     for locale in locales:
         identifier = find_locale_identifier(locale.path)
         f.write("   Push ${" + identifier + "}\n")
+    
         name = auto_match_locale(identifier)
         if name == "TradChinese": name = "Traditional Chinese"
+        if name == "SimpChinese": name = "Simplified Chinese"
+            
         f.write(f'   Push "{name}"\n')
+    
     f.write('   Push A\n')
     f.write('   LangDLL::LangDialog $(InstallerLanguage) $(InstallerLanguageText)\n')
     f.write('   Pop $LANGUAGE\n')
