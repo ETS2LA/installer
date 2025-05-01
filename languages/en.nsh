@@ -9,7 +9,6 @@ LangString WelcomeText ${LANG_ENGLISH} "This wizard will guide you through the i
 # NOTE: You can add credits to the above WelcomeText if you wish. You can also add any other text to it that you want.
 
 # License
-LangString LicenseTitle ${LANG_ENGLISH} "License Agreement"
 LangString LicenseText ${LANG_ENGLISH} "Please read the following license agreement carefully, we are proud of it. $\r$\n$\r$\nIf you accept the terms of the license agreement, click Next to continue."
 
 # Directory

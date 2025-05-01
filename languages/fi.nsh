@@ -6,7 +6,6 @@ LangString WelcomeText ${LANG_FINNISH} "Tämä ohjelma opastaa sinua asennuspros
 # NOTE: You can add credits to the above WelcomeText if you wish. You can also add any other text to it that you want.
 
 ; License
-LangString LicenseTitle ${LANG_FINNISH} "Lisenssisopimus"
 LangString LicenseText ${LANG_FINNISH} "Lue yllä oleva lisenssi tarkasti, olemme siitä ylpeitä. $\r$\n$\r$\nJos hyväksyt lisenssin paina hyväksy jatkaaksesi."
 
 ; Directory

@@ -5,7 +5,6 @@ LangString WelcomeTitle ${LANG_TRADCHINESE} "歡迎使用 ETS2LA 安裝程式"
 LangString WelcomeText ${LANG_TRADCHINESE} "本精靈將引導你完成 ETS2LA 的安裝。$\r$\n$\r$\n請點擊「下一步」以繼續。"
 
 # License
-LangString LicenseTitle ${LANG_TRADCHINESE} "授權條款"
 LangString LicenseText ${LANG_TRADCHINESE} "請仔細閱讀以下授權條款，我們對此感到自豪。$\r$\n$\r$\n如果你同意條款內容，請點擊「下一步」以繼續。"
 
 # Directory

@@ -1,6 +1,5 @@
-Unicode true
+Unicode True
 
-!include "languages.nsh"
 !include "MUI2.nsh"
 !include "nsDialogs.nsh"
 
@@ -19,21 +18,25 @@ InstallDir "C:\ETS2LA"
 # Installer Information
 Name "ETS2LA"
 BrandingText $(BrandingText)
-Icon "icons/favicon.ico"
+Icon "img\favicon.ico"
 OutFile "ETS2LA-2.0-Windows-Installer.exe"
 
 # MUI Setup
-!define MUI_ICON "icons/favicon.ico"
-!define MUI_UNICON "icons/favicon.ico"
+!define MUI_ICON "img\favicon.ico"
+!define MUI_UNICON "img\favicon.ico"
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_BITMAP "img\header.bmp2"
+!define MUI_HEADERIMAGE_UNBITMAP "img\header.bmp2"
 !include "MUI2.nsh"
 
 # Welcome Page
 !define MUI_WELCOMEPAGE_TITLE $(WelcomeTitle)
 !define MUI_WELCOMEPAGE_TEXT $(WelcomeText)
+!define MUI_WELCOMEFINISHPAGE_BITMAP "img\welcome.bmp2"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "img\welcome.bmp2"
 !insertmacro MUI_PAGE_WELCOME
 
 # License Page
-!define MUI_LICENSEPAGE_TEXT_TOP $(LicenseTitle)
 !define MUI_LICENSEPAGE_TEXT_BOTTOM $(LicenseText)
 !insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
 
@@ -59,8 +62,6 @@ Page custom SelectMirrorPage SelectMirrorPageLeave
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT $(LaunchText)
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchETS2LA
-
-!define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
 !insertmacro MUI_PAGE_FINISH
 
@@ -220,3 +221,5 @@ Section "Uninstall"
 
     DetailPrint "Uninstallation complete."
 SectionEnd
+
+!include "languages.nsh"
