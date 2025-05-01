@@ -24,6 +24,11 @@ LangString Cloning ${LANG_ENGLISH} "Cloning ETS2LA repository from:"
 LangString PythonRequirements ${LANG_ENGLISH} "Installing Python requirements..."
 LangString PythonTakesLong ${LANG_ENGLISH} "This will take a while, we cannot make it faster. Up to 30 minutes."
 
+# Shortcuts
+LangString ShortcutSelectionTitle ${LANG_ENGLISH} "Select Shortcut Options"
+LangString CreateStartMenuShortcut ${LANG_ENGLISH} "Create Start Menu Shortcut"
+LangString CreateDesktopShortcut ${LANG_ENGLISH} "Create Desktop Shortcut"
+
 # Finish Page
 LangString FinishTitle ${LANG_ENGLISH} "Installation Complete"
 LangString FinishText ${LANG_ENGLISH} "The ETS2LA installation is complete. You can now launch the application."

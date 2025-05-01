@@ -1,5 +1,8 @@
 ﻿LangString BrandingText ${LANG_TRADCHINESE} "了解更多資訊，請前往 ets2la.com"
 
+LangString InstallerLanguage ${LANG_TRADCHINESE} "安裝程式語言"
+LangString InstallerLanguageText ${LANG_TRADCHINESE} "請選擇安裝程式的語言。"
+
 # Welcome
 LangString WelcomeTitle ${LANG_TRADCHINESE} "歡迎使用 ETS2LA 安裝程式"
 LangString WelcomeText ${LANG_TRADCHINESE} "本精靈將引導你完成 ETS2LA 的安裝。$\r$\n$\r$\n請點擊「下一步」以繼續。"
@@ -19,6 +22,11 @@ LangString InstallingGit ${LANG_TRADCHINESE} "正在解壓縮並安裝 Git..."
 LangString Cloning ${LANG_TRADCHINESE} "正在從以下來源複製 ETS2LA 資料庫："
 LangString PythonRequirements ${LANG_TRADCHINESE} "正在安裝 Python 相依套件..."
 LangString PythonTakesLong ${LANG_TRADCHINESE} "這個過程會花一些時間，我們無法加速。可能需要長達 30 分鐘。"
+
+# Shortcuts
+LangString ShortcutSelectionTitle ${LANG_TRADCHINESE} "選擇捷徑選項"
+LangString CreateStartMenuShortcut ${LANG_TRADCHINESE} "建立開始選單捷徑"
+LangString CreateDesktopShortcut ${LANG_TRADCHINESE} "建立桌面捷徑"
 
 # Finish Page
 LangString FinishTitle ${LANG_TRADCHINESE} "安裝完成"

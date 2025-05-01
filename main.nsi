@@ -48,6 +48,9 @@ OutFile "ETS2LA-2.0-Windows-Installer.exe"
 # Mirror selection
 Page custom SelectMirrorPage SelectMirrorPageLeave
 
+# Shortcuts
+Page custom ShortcutSelectionPage ShortcutSelectionPageLeave
+
 # Installation Page
 !insertmacro MUI_PAGE_INSTFILES
 
@@ -184,13 +187,85 @@ Section "Executables" SEC04
     SetOutPath "$INSTDIR"
     File /r "executables\*.*"
     File /r "executables\*"
+    
+    SetOutPath "$INSTDIR\system"
+    File /r "img\favicon.ico"
+
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayName" "ETS2LA"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "UninstallString" "$INSTDIR\ETS2LA-Uninstaller.exe"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "InstallLocation" "$INSTDIR"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayIcon" "$INSTDIR\system\favicon.ico"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "Publisher" "ETS2LA Team"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayVersion" "0.2.0"
+    WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoModify" 1
+    WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoRepair" 1
+SectionEnd
+
+# Variables for shortcut options
+Var StartMenuShortcut
+Var DesktopShortcut
+Var CheckStartMenu
+Var CheckDesktop
+
+Function ShortcutSelectionPage
+    nsDialogs::Create 1018
+    Pop $0
+    ${If} $0 == error
+        Abort
+    ${EndIf}
+
+    # Create a label
+    ${NSD_CreateLabel} 0 0 100% 24u $(ShortcutSelectionTitle)
+    Pop $0
+
+    # Create checkboxes for shortcuts
+    ${NSD_CreateCheckBox} 0 30u 100% 12u $(CreateStartMenuShortcut)
+    Pop $CheckStartMenu
+    ${NSD_CreateCheckBox} 0 50u 100% 12u $(CreateDesktopShortcut)
+    Pop $CheckDesktop
+
+    # Set default states (checked by default)
+    ${NSD_SetState} $CheckStartMenu ${BST_CHECKED}
+    ${NSD_SetState} $CheckDesktop ${BST_UNCHECKED}
+
+    # Show the dialog
+    nsDialogs::Show
+FunctionEnd
+
+Function ShortcutSelectionPageLeave
+    ${NSD_GetState} $CheckStartMenu $0
+    ${If} $0 == ${BST_CHECKED}
+        StrCpy $StartMenuShortcut "1"
+    ${Else}
+        StrCpy $StartMenuShortcut "0"
+    ${EndIf}
+
+    ${NSD_GetState} $CheckDesktop $0
+    ${If} $0 == ${BST_CHECKED}
+        StrCpy $DesktopShortcut "1"
+    ${Else}
+        StrCpy $DesktopShortcut "0"
+    ${EndIf}
+FunctionEnd
+
+Section "Create Shortcuts" SEC05
+    # Create Start Menu shortcut
+    ${If} $StartMenuShortcut == "1"
+        CreateDirectory "$SMPROGRAMS\ETS2LA"
+        CreateShortCut "$SMPROGRAMS\ETS2LA\ETS2LA.lnk" "$INSTDIR\start.bat" "" "$INSTDIR\system\favicon.ico"
+    ${EndIf}
+
+    # Create Desktop shortcut
+    ${If} $DesktopShortcut == "1"
+        CreateShortCut "$DESKTOP\ETS2LA.lnk" "$INSTDIR\start.bat" "" "$INSTDIR\system\favicon.ico"
+    ${EndIf}
 SectionEnd
 
 Function LaunchETS2LA
     Exec '"$INSTDIR\start.bat"'
 FunctionEnd
 
-Section "Copy Uninstaller" SEC05
+Section "Copy Uninstaller" SEC06
     WriteUninstaller "$INSTDIR\ETS2LA-Uninstaller.exe"
 SectionEnd
 
@@ -216,8 +291,14 @@ Section "Uninstall"
     Delete "$INSTDIR\ETS2LA-Uninstaller.exe"
 
     # Remove registry entries
-    DeleteRegKey HKCU "Software\ETS2LA"
-    DeleteRegKey HKLM "Software\ETS2LA"
+    DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA"
+
+    # Remove Start Menu shortcut
+    Delete "$SMPROGRAMS\ETS2LA\ETS2LA.lnk"
+    RMDir "$SMPROGRAMS\ETS2LA"
+
+    # Remove Desktop shortcut
+    Delete "$DESKTOP\ETS2LA.lnk"
 
     DetailPrint "Uninstallation complete."
 SectionEnd
