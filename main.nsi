@@ -40,6 +40,12 @@ OutFile "ETS2LA-2.0-Windows-Installer.exe"
 !define MUI_LICENSEPAGE_TEXT_BOTTOM $(LicenseText)
 !insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
 
+# Scam page
+Page custom ScamWarningPage ScamWarningPageLeave
+Var Dialog
+Var ScamCheckbox
+Var ScamState
+
 # Directory Page
 !define MUI_DIRECTORYPAGE_TEXT_TOP $(DirectoryTitle)
 !define MUI_DIRECTORYPAGE_TEXT_DESTINATION $(DirectoryText)
@@ -47,9 +53,19 @@ OutFile "ETS2LA-2.0-Windows-Installer.exe"
 
 # Mirror selection
 Page custom SelectMirrorPage SelectMirrorPageLeave
+Var MirrorSelection
+Var PyPi
+Var RadioGitLab
+Var RadioGitHub
+Var RadioSourceForge
+Var PyPiMirrorSelection
 
 # Shortcuts
 Page custom ShortcutSelectionPage ShortcutSelectionPageLeave
+Var StartMenuShortcut
+Var DesktopShortcut
+Var CheckStartMenu
+Var CheckDesktop
 
 # Installation Page
 !insertmacro MUI_PAGE_INSTFILES
@@ -69,13 +85,8 @@ Page custom ShortcutSelectionPage ShortcutSelectionPageLeave
 !insertmacro MUI_PAGE_FINISH
 
 # Mirror page def
-Var MirrorSelection
-Var PyPi
-Var RadioGitLab
-Var RadioGitHub
-Var RadioSourceForge
-Var PyPiMirrorSelection
 Function SelectMirrorPage
+    !insertmacro MUI_HEADER_TEXT $(MirrorHeader) $(MirrorHeaderDescription)
     nsDialogs::Create 1018
     Pop $0
     ${If} $0 == error
@@ -128,86 +139,38 @@ Function SelectMirrorPageLeave
     ${EndIf}
 FunctionEnd
 
-Section "Python" SEC01
-    # Copy python
-    SetOutPath "$INSTDIR\system\python"
-    File /r "3rd-party\python\*.*"
-    File /r "3rd-party\python\*"
-
-    # Copy tkinter
-    File /r "3rd-party\tkinter-standalone-main\3.12\python_embedded\*"
-
-    # Install pip
-    ExecWait '"$INSTDIR\system\python\python.exe" "$INSTDIR\system\python\get-pip.py"'
-SectionEnd
-
-Section "Git" SEC02
-    # Set output path for Git
-    SetOutPath "$INSTDIR\system\git"
-    File /r "3rd-party\git-for-windows\*.*"
-    File /r "3rd-party\git-for-windows\*"
-SectionEnd
-
-Section "Download" SEC03
-    # Set the output path for the app directory
-    SetOutPath "$INSTDIR\app"
-
-    DetailPrint $(Cloning)
-    DetailPrint $MirrorSelection
-    Sleep 1000
-
-    # Clone the repository based on the selected mirror with progress
-    ${If} $MirrorSelection == "GitLab"
-        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .'
-    ${ElseIf} $MirrorSelection == "GitHub"
-        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .'
-    ${ElseIf} $MirrorSelection == "SourceForge"
-        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .'
+# Scam page def
+Function ScamWarningPage
+    !insertmacro MUI_HEADER_TEXT $(ScamWarningHeader) $(ScamWarningHeaderDescription)
+    nsDialogs::Create 1018
+    Pop $Dialog
+    ${If} $Dialog == error
+        Abort
     ${EndIf}
 
-    # Install python requirements
-    ${If} $PyPi == "Pypi"
+    # Create a label with warning text
+    ${NSD_CreateLabel} 0 0 100% 60u $(ScamWarningTitle)
+    Pop $0
 
-        DetailPrint $(PythonRequirements)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --no-cache-dir wheel setuptools poetry requests'
-        DetailPrint $(PythonTakesLong)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+    # Create checkbox that must be checked
+    ${NSD_CreateCheckBox} 0 70u 100% 20u $(ScamWarningCheckbox)
+    Pop $ScamCheckbox
 
-    ${ElseIf} $PyPi == "Mirror"
+    # Show the page
+    nsDialogs::Show
+FunctionEnd
 
-        DetailPrint $(PythonRequirements)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
-        DetailPrint $(PythonTakesLong)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
-
+Function ScamWarningPageLeave
+    ${NSD_GetState} $ScamCheckbox $ScamState
+    ${If} $ScamState != ${BST_CHECKED}
+        MessageBox MB_ICONEXCLAMATION $(ScamWarningNotChecked)
+        Abort
     ${EndIf}
-SectionEnd
+FunctionEnd
 
-Section "Executables" SEC04
-    SetOutPath "$INSTDIR"
-    File /r "executables\*.*"
-    File /r "executables\*"
-    
-    SetOutPath "$INSTDIR\system"
-    File /r "img\favicon.ico"
-
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayName" "ETS2LA"
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "UninstallString" "$INSTDIR\ETS2LA-Uninstaller.exe"
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "InstallLocation" "$INSTDIR"
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayIcon" "$INSTDIR\system\favicon.ico"
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "Publisher" "ETS2LA Team"
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayVersion" "0.2.0"
-    WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoModify" 1
-    WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoRepair" 1
-SectionEnd
-
-# Variables for shortcut options
-Var StartMenuShortcut
-Var DesktopShortcut
-Var CheckStartMenu
-Var CheckDesktop
-
+# Shortcut page def
 Function ShortcutSelectionPage
+    !insertmacro MUI_HEADER_TEXT $(ShortcutHeader) $(ShortcutHeaderDescription)
     nsDialogs::Create 1018
     Pop $0
     ${If} $0 == error
@@ -248,6 +211,140 @@ Function ShortcutSelectionPageLeave
     ${EndIf}
 FunctionEnd
 
+Section "Python" SEC01
+    # Copy python
+    SetOutPath "$INSTDIR\system\python"
+    File /r "3rd-party\python\*.*"
+    File /r "3rd-party\python\*"
+
+    # Copy tkinter
+    File /r "3rd-party\tkinter-standalone-main\3.12\python_embedded\*"
+
+    # Install pip
+    DetailPrint $(InstallingPip)
+    ExecWait '"$INSTDIR\system\python\python.exe" "$INSTDIR\system\python\get-pip.py"'
+    ${If} $0 != 0
+        MessageBox MB_ICONSTOP|MB_OK $(PipInstallError)
+        Abort $(PipInstallError)
+    ${EndIf}
+SectionEnd
+
+Section "Git" SEC02
+    # Set output path for Git
+    SetOutPath "$INSTDIR\system\git"
+    File /r "3rd-party\git-for-windows\*.*"
+    File /r "3rd-party\git-for-windows\*"
+SectionEnd
+
+Section "Download" SEC03
+    # Set the output path for the app directory
+    SetOutPath "$INSTDIR\app"
+
+    DetailPrint $(Cloning)
+    DetailPrint $MirrorSelection
+    Sleep 1000
+
+    # Clone the repository based on the selected mirror with progress
+    ${If} $MirrorSelection == "GitLab"
+        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .'
+    ${ElseIf} $MirrorSelection == "GitHub"
+        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .'
+    ${ElseIf} $MirrorSelection == "SourceForge"
+        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .'
+    ${EndIf}
+
+    # Check if git clone was successful
+    ${If} $0 != 0
+        MessageBox MB_ICONSTOP|MB_OK $(GitCloneError)
+        DetailPrint $(GitCloneFailed)
+        # Try another mirror automatically
+        ${If} $MirrorSelection == "GitLab"
+            DetailPrint $(TryingAnotherMirror)
+            DetailPrint "GitHub"
+            ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
+            ${If} $0 != 0
+                DetailPrint $(TryingAnotherMirror)
+                DetailPrint "SourceForge"
+                ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
+                ${If} $0 != 0
+                    MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
+                    Abort $(InstallationAborted)
+                ${EndIf}
+            ${EndIf}
+        ${ElseIf} $MirrorSelection == "GitHub"
+            DetailPrint $(TryingAnotherMirror)
+            DetailPrint "GitLab"
+            ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
+            ${If} $0 != 0
+                DetailPrint $(TryingAnotherMirror)
+                DetailPrint "SourceForge"
+                ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
+                ${If} $0 != 0
+                    MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
+                    Abort $(InstallationAborted)
+                ${EndIf}
+            ${EndIf}
+        ${ElseIf} $MirrorSelection == "SourceForge"
+            DetailPrint $(TryingAnotherMirror)
+            DetailPrint "GitLab"
+            ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
+            ${If} $0 != 0
+                DetailPrint $(TryingAnotherMirror)
+                DetailPrint "GitHub"
+                ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
+                ${If} $0 != 0
+                    MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
+                    Abort $(InstallationAborted)
+                ${EndIf}
+            ${EndIf}
+        ${EndIf}
+    ${EndIf}
+
+    # Verify that the repository was cloned successfully by checking README and requirements
+    ${If} ${FileExists} "$INSTDIR\app\README.md"
+    ${AndIf} ${FileExists} "$INSTDIR\app\requirements.txt"
+        DetailPrint $(GitCloneSuccess)
+    ${Else}
+        MessageBox MB_ICONSTOP|MB_OK $(IncompleteRepo)
+        Abort $(InstallationAborted)
+    ${EndIf}
+
+    # Install python requirements
+    ${If} $PyPi == "Pypi"
+
+        DetailPrint $(PythonRequirements)
+        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --no-cache-dir wheel setuptools poetry requests'
+        DetailPrint $(PythonTakesLong)
+        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+
+    ${ElseIf} $PyPi == "Mirror"
+
+        DetailPrint $(PythonRequirements)
+        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
+        DetailPrint $(PythonTakesLong)
+        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+
+    ${EndIf}
+SectionEnd
+
+Section "Executables" SEC04
+    SetOutPath "$INSTDIR"
+    File /r "executables\*.*"
+    File /r "executables\*"
+    
+    SetOutPath "$INSTDIR\system"
+    File /r "img\favicon.ico"
+
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayName" "ETS2LA"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "UninstallString" "$INSTDIR\ETS2LA-Uninstaller.exe"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "InstallLocation" "$INSTDIR"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayIcon" "$INSTDIR\system\favicon.ico"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "Publisher" "ETS2LA Team"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayVersion" "0.2.0"
+    WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoModify" 1
+    WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoRepair" 1
+SectionEnd
+
 Section "Create Shortcuts" SEC05
     # Create Start Menu shortcut
     ${If} $StartMenuShortcut == "1"
@@ -276,7 +373,6 @@ Section "Uninstall"
     Delete "$INSTDIR\app\*.*"
     Delete "$INSTDIR\system\python\*.*"
     Delete "$INSTDIR\system\git\*.*"
-    Delete "$INSTDIR\executables\*.*"
     Delete "$INSTDIR\*.*"
 
     # Remove directories
