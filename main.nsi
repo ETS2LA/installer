@@ -222,7 +222,7 @@ Section "Python" SEC01
 
     # Install pip
     DetailPrint $(InstallingPip)
-    ExecWait '"$INSTDIR\system\python\python.exe" "$INSTDIR\system\python\get-pip.py"'
+    nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" "$INSTDIR\system\python\get-pip.py"'
     ${If} $0 != 0
         MessageBox MB_ICONSTOP|MB_OK $(PipInstallError)
         Abort $(PipInstallError)
@@ -240,17 +240,16 @@ Section "Download" SEC03
     # Set the output path for the app directory
     SetOutPath "$INSTDIR\app"
 
-    DetailPrint $(Cloning)
-    DetailPrint $MirrorSelection
+    DetailPrint "$(Cloning) $MirrorSelection"
     Sleep 1000
 
     # Clone the repository based on the selected mirror with progress
     ${If} $MirrorSelection == "GitLab"
-        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .'
+        nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .'
     ${ElseIf} $MirrorSelection == "GitHub"
-        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .'
+        nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .'
     ${ElseIf} $MirrorSelection == "SourceForge"
-        ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .'
+        nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .'
     ${EndIf}
 
     # Check if git clone was successful
@@ -261,11 +260,11 @@ Section "Download" SEC03
         ${If} $MirrorSelection == "GitLab"
             DetailPrint $(TryingAnotherMirror)
             DetailPrint "GitHub"
-            ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
+            nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
             ${If} $0 != 0
                 DetailPrint $(TryingAnotherMirror)
                 DetailPrint "SourceForge"
-                ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
+                nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
                 ${If} $0 != 0
                     MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
                     Abort $(InstallationAborted)
@@ -274,11 +273,11 @@ Section "Download" SEC03
         ${ElseIf} $MirrorSelection == "GitHub"
             DetailPrint $(TryingAnotherMirror)
             DetailPrint "GitLab"
-            ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
+            nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
             ${If} $0 != 0
                 DetailPrint $(TryingAnotherMirror)
                 DetailPrint "SourceForge"
-                ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
+                nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
                 ${If} $0 != 0
                     MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
                     Abort $(InstallationAborted)
@@ -287,11 +286,11 @@ Section "Download" SEC03
         ${ElseIf} $MirrorSelection == "SourceForge"
             DetailPrint $(TryingAnotherMirror)
             DetailPrint "GitLab"
-            ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
+            nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
             ${If} $0 != 0
                 DetailPrint $(TryingAnotherMirror)
                 DetailPrint "GitHub"
-                ExecWait '"$INSTDIR\system\git\bin\git.exe" clone --progress --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
+                nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
                 ${If} $0 != 0
                     MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
                     Abort $(InstallationAborted)
@@ -313,16 +312,16 @@ Section "Download" SEC03
     ${If} $PyPi == "Pypi"
 
         DetailPrint $(PythonRequirements)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --no-cache-dir wheel setuptools poetry requests'
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --no-cache-dir wheel setuptools poetry requests'
         DetailPrint $(PythonTakesLong)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
 
     ${ElseIf} $PyPi == "Mirror"
 
         DetailPrint $(PythonRequirements)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
         DetailPrint $(PythonTakesLong)
-        ExecWait '"$INSTDIR\system\python\python.exe" -m pip install --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
 
     ${EndIf}
 SectionEnd

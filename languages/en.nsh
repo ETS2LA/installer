@@ -45,7 +45,7 @@ LangString GitCloneSuccess ${LANG_ENGLISH} "Successfully downloaded required fil
 LangString IncompleteRepo ${LANG_ENGLISH} "The downloaded repository appears to be incomplete. Please try again or select a different mirror."
 
 LangString PythonRequirements ${LANG_ENGLISH} "Installing Python requirements..."
-LangString PythonTakesLong ${LANG_ENGLISH} "This will take a while, we cannot make it faster. Up to 30 minutes."
+LangString PythonTakesLong ${LANG_ENGLISH} "This will take a while, up to ~30 minutes. If you think it's stuck, it's not."
 
 # Shortcuts
 LangString ShortcutHeader ${LANG_ENGLISH} "Shortcut Selection"
