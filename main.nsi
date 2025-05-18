@@ -223,6 +223,7 @@ Section "Python" SEC01
     # Install pip
     DetailPrint $(InstallingPip)
     nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" "$INSTDIR\system\python\get-pip.py"'
+    Pop $0
     ${If} $0 != 0
         MessageBox MB_ICONSTOP|MB_OK $(PipInstallError)
         Abort $(PipInstallError)
@@ -253,6 +254,7 @@ Section "Download" SEC03
     ${EndIf}
 
     # Check if git clone was successful
+    Pop $0
     ${If} $0 != 0
         MessageBox MB_ICONSTOP|MB_OK $(GitCloneError)
         DetailPrint $(GitCloneFailed)
@@ -261,10 +263,12 @@ Section "Download" SEC03
             DetailPrint $(TryingAnotherMirror)
             DetailPrint "GitHub"
             nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
+            Pop $0
             ${If} $0 != 0
                 DetailPrint $(TryingAnotherMirror)
                 DetailPrint "SourceForge"
                 nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
+                Pop $0
                 ${If} $0 != 0
                     MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
                     Abort $(InstallationAborted)
@@ -274,10 +278,12 @@ Section "Download" SEC03
             DetailPrint $(TryingAnotherMirror)
             DetailPrint "GitLab"
             nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
+            Pop $0
             ${If} $0 != 0
                 DetailPrint $(TryingAnotherMirror)
                 DetailPrint "SourceForge"
                 nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
+                Pop $0
                 ${If} $0 != 0
                     MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
                     Abort $(InstallationAborted)
@@ -287,10 +293,12 @@ Section "Download" SEC03
             DetailPrint $(TryingAnotherMirror)
             DetailPrint "GitLab"
             nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITLAB_URL} .' $0
+            Pop $0
             ${If} $0 != 0
                 DetailPrint $(TryingAnotherMirror)
                 DetailPrint "GitHub"
                 nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
+                Pop $0
                 ${If} $0 != 0
                     MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
                     Abort $(InstallationAborted)
