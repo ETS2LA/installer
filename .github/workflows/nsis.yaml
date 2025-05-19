@@ -16,11 +16,6 @@ jobs:
         uses: repolevedavaj/install-nsis@v1.0.2
         with:
           nsis-version: '3.10'
-      - name: Install NSIS Inetc plugin
-        run: |
-          Invoke-WebRequest https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip -OutFile C:\WINDOWS\Temp\Inetc_plugin.zip
-          Expand-Archive "C:\WINDOWS\Temp\Inetc_plugin.zip" -DestinationPath "C:\Program Files (x86)\NSIS" -Force
-        shell: pwsh
       - name: Setup Python
         uses: actions/setup-python@v3
         with:
