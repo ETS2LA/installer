@@ -33,7 +33,7 @@ jobs:
           makensis main.nsi
         shell: cmd
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ETS2LA-Windows-Installer
           path: ETS2LA-Windows-Installer.exe

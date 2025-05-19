@@ -7,7 +7,7 @@ RequestExecutionLevel user
 
 # Variables
 InstallDir "C:\ETS2LA"
-!define BRANCH "rewrite"
+!define BRANCH "main"
 !define GITLAB_URL "https://gitlab.com/ETS2LA/ETS2LA"
 !define GITHUB_URL "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 !define SOURCEFORGE_URL "https://git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
