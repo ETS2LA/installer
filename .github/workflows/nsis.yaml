@@ -40,6 +40,19 @@ jobs:
         with:
           tag_name: release_commit_${{ github.sha }}
           release_name: Automated Release ${{ github.sha }}
+          body: |
+            Latest automated release of the **ETS2LA Windows Installer**.
+            This installer was built from commit `${{ github.sha }}`.
+
+            - ${{ github.event.head_commit.message }}
+            
+            Authored by **${{ github.event.head_commit.author.name }}**
+            Release date: **${{ github.event.head_commit.timestamp }}**
+
+            ---
+
+            You can download the latest `ETS2LA-Windows-Installer.exe` from the sources below or from the sourceforge download link provided.
+
           draft: false
           prerelease: false
       - name: Upload Release Asset
