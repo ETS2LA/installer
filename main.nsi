@@ -19,7 +19,7 @@ InstallDir "C:\ETS2LA"
 Name "ETS2LA"
 BrandingText $(BrandingText)
 Icon "img\favicon.ico"
-OutFile "ETS2LA-2.0-Windows-Installer.exe"
+OutFile "ETS2LA-Windows-Installer.exe"
 
 # MUI Setup
 !define MUI_ICON "img\favicon.ico"
