@@ -9,7 +9,7 @@ LangString WelcomeText ${LANG_FRENCH} "The processus va vous guider sur l'instal
 # NOTE: You can add credits to the above WelcomeText if you wish. You can also add any other text to it that you want.
 
 # License
-LangString LicenseText ${LANG_FRENCH} "Veuillez, s'il vous plaît, lire l'accord de liscence suivant attentivement, nous en sommes fière.$\r$\n$\r$\nSi vous acceptez les termes de l'accord de liscence, cliquez sur Suivant" pour continuer."
+LangString LicenseText ${LANG_FRENCH} "Veuillez, s'il vous plaît, lire l'accord de liscence suivant attentivement, nous en sommes fière.$\r$\n$\r$\nSi vous acceptez les termes de l'accord de liscence, cliquez sur Suivant pour continuer."
 
 # Scam
 LangString ScamWarningHeader ${LANG_FRENCH} "Attention Arnaque"
