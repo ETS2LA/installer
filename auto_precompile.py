@@ -101,6 +101,7 @@ with open("languages.nsh", "w", encoding="utf-8") as f:
         name = auto_match_locale(identifier)
         if name == "TradChinese": name = "Traditional Chinese"
         if name == "SimpChinese": name = "Simplified Chinese"
+        if name == "Slovak": name = "Slovakian"
             
         f.write(f'   Push "{name}"\n')
     
