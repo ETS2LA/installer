@@ -5,20 +5,20 @@ LangString InstallerLanguageText ${LANG_SIMPCHINESE} "请选择安装程序的�
 
 # Welcome
 LangString WelcomeTitle ${LANG_SIMPCHINESE} "欢迎使用 ETS2LA 安装程序"
-LangString WelcomeText ${LANG_SIMPCHINESE} "本向导将引导您完成 ETS2LA 的安装流程。\r\n\r\n请点击“下一步”继续。"
+LangString WelcomeText ${LANG_SIMPCHINESE} "本向导将引导您完成 ETS2LA 的安装流程。$\r$\n$\r$\n请点击“下一步”继续。"
 
 # License
-LangString LicenseText ${LANG_SIMPCHINESE} "请仔细阅读以下许可协议，我们对此深感自豪。\r\n\r\n如果您同意许可协议的内容，请点击“下一步”继续。"
+LangString LicenseText ${LANG_SIMPCHINESE} "请仔细阅读以下许可协议，我们对此深感自豪。$\r$\n$\r$\n如果您同意许可协议的内容，请点击“下一步”继续。"
 
 # Scam
 LangString ScamWarningHeader ${LANG_SIMPCHINESE} "防诈骗提示"
 LangString ScamWarningHeaderDescription ${LANG_SIMPCHINESE} "如果您为 ETS2LA 付过费，那您被骗了。"
-LangString ScamWarningTitle ${LANG_SIMPCHINESE} "重要提示：本软件完全免费。\r\n\r\nETS2LA 是一个开源项目，任何人都可以免费获取。如果您为获取本安装程序或软件而付费，那您被骗了。"
+LangString ScamWarningTitle ${LANG_SIMPCHINESE} "重要提示：本软件完全免费。$\r$\n$\r$\nETS2LA 是一个开源项目，任何人都可以免费获取。如果您为获取本安装程序或软件而付费，那您被骗了。"
 LangString ScamWarningCheckbox ${LANG_SIMPCHINESE} "我已知晓，如果我为本安装程序付费，那就是被骗了。"
 LangString ScamWarningNotChecked ${LANG_SIMPCHINESE} "请勾选此项，确认您明白本软件为免费软件。"
 
 # Directory
-LangString DirectoryTitle ${LANG_SIMPCHINESE} "请选择您希望安装 ETS2LA 的文件夹。请注意，安装完成后 ETS2LA 不能移动。\r\n\r\n请点击“下一步”继续。"
+LangString DirectoryTitle ${LANG_SIMPCHINESE} "请选择您希望安装 ETS2LA 的文件夹。请注意，安装完成后 ETS2LA 不能移动。$\r$\n$\r$\n请点击“下一步”继续。"
 LangString DirectoryText ${LANG_SIMPCHINESE} "选择目标文件夹"
 
 # Mirror Selection
