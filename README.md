@@ -14,7 +14,7 @@ makensis main.nsi
 ```
 
 ### Contributing Translations
-Please refer to the [translation guide](TRANSLATIONS.md) for information on how to contribute translations for the installer.
+Please refer to the [translation guide](TRANSLATION.md) for information on how to contribute translations for the installer.
 
 ### Contributing Code
 Please fork the repository and create a PR with your changes.
