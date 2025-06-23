@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install NSIS
-        uses: repolevedavaj/install-nsis@v1.0.2
+        uses: repolevedavaj/install-nsis@v1.0.3
         with:
           nsis-version: '3.10'
 
