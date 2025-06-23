@@ -347,7 +347,7 @@ Section "Executables" SEC04
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "InstallLocation" "$INSTDIR"
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayIcon" "$INSTDIR\system\favicon.ico"
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "Publisher" "ETS2LA Team"
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayVersion" "0.2.0"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "DisplayVersion" "0.3.0"
     WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoModify" 1
     WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ETS2LA" "NoRepair" 1
 SectionEnd
