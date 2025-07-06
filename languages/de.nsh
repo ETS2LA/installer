@@ -8,7 +8,7 @@ LangString WelcomeTitle ${LANG_GERMAN} "Willkommen beim ETS2LA-Installer"
 LangString WelcomeText ${LANG_GERMAN} "Dieser Assistent hilft dir, ETS2LA auf deinem PC zu installieren. $\r$\n$\r$\nKlicke auf Weiter, um loszulegen."
 
 # Lizenz
-LangString LicenseText ${LANG_GERMAN} "Lies dir bitte die folgende Lizenzvereinbarung aufmerksam durch, wir sind stolz drauf! $\r$\n$\r$\nWenn du mit den Bedingungen einverstanden bist, klick auf >>Weiter<<."
+LangString LicenseText ${LANG_GERMAN} "Lies dir bitte die folgende Lizenzvereinbarung aufmerksam durch, wir sind stolz drauf! $\r$\n$\r$\nWenn du mit den Bedingungen einverstanden bist, klick auf Annehmen."
 
 # Betrugshinweis
 LangString ScamWarningHeader ${LANG_GERMAN} "Wichtiger Hinweis"
@@ -18,7 +18,7 @@ LangString ScamWarningCheckbox ${LANG_GERMAN} "Ich habe verstanden, dass ich bet
 LangString ScamWarningNotChecked ${LANG_GERMAN} "Bitte bestätige durch Anhaken, dass du verstanden hast, dass die Software kostenlos ist."
 
 # Installationsverzeichnis
-LangString DirectoryTitle ${LANG_GERMAN} "Wähle den Ordner, in dem ETS2LA installiert werden soll. Wichtig: Nach der Installation kann ETS2LA nicht verschoben werden.$\r$\n$\r$\nKlicke auf >>Weiter<<, um fortzufahren."
+LangString DirectoryTitle ${LANG_GERMAN} "Wähle den Ordner, in dem ETS2LA installiert werden soll. Wichtig: Nach der Installation kann ETS2LA nicht verschoben werden.$\r$\n$\r$\nKlicke auf Weiter, um fortzufahren."
 LangString DirectoryText ${LANG_GERMAN} "Zielordner auswählen"
 
 # Mirror-Auswahl
@@ -44,7 +44,7 @@ LangString GitCloneSuccess ${LANG_GERMAN} "Dateien erfolgreich heruntergeladen."
 LangString IncompleteRepo ${LANG_GERMAN} "Das Repository ist unvollständig. Versuche es erneut oder wähle einen anderen Mirror."
 
 LangString PythonRequirements ${LANG_GERMAN} "Python-Abhängigkeiten werden installiert..."
-LangString PythonTakesLong ${LANG_GERMAN} "Das kann etwas dauern, bis zu ~30 Minuten. Wenn’s so aussieht, als ob nichts passiert: Geduld, es läuft!"
+LangString PythonTakesLong ${LANG_GERMAN} "Das kann etwas dauern, bis zu ~30 Minuten... also Geduld haben, es läuft!"
 
 # Verknüpfungen
 LangString ShortcutHeader ${LANG_GERMAN} "Verknüpfungen erstellen"
