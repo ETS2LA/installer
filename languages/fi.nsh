@@ -9,7 +9,7 @@ LangString WelcomeText ${LANG_FINNISH} "Tämä ohjelma opastaa sinua ETS2LA:n as
 # NOTE: You can add credits to the above WelcomeText if you wish. You can also add any other text to it that you want.
 
 # License
-LangString LicenseText ${LANG_FINNISH} "Luethan yllä olevan lisenssin tarkasti, olemme siitä todella ylpeitä. $\r$\n$\r$\nJos hyväksyt lisenssin ehdot, paina Seuraava jatkaaksesi."
+LangString LicenseText ${LANG_FINNISH} "Luethan yllä olevan lisenssin tarkasti, olemme siitä ylpeitä. $\r$\n$\r$\nJos hyväksyt lisenssin ehdot, paina Seuraava jatkaaksesi."
 
 # Scam
 LangString ScamWarningHeader ${LANG_FINNISH} "Huijausvaroitus"
@@ -21,6 +21,7 @@ LangString ScamWarningNotChecked ${LANG_FINNISH} "Sinun on tunnustettava, että 
 # Directory
 LangString DirectoryTitle ${LANG_FINNISH} "Valitse nyt asennuskansio. Huomaa että sovellusta ei voida siirtää asennuksen jälkeen. $\r$\n$\r$\nPaina seuraava jatkaaksesi."
 LangString DirectoryText ${LANG_FINNISH} "Valitse kohdekansio"
+LangString DirectoryNotEmpty ${LANG_FINNISH} "Valittu kansio ei ole tyhjä. Valitse tyhjä kansio tai tyhjennä nykyinen."
 
 # Mirror Selection
 LangString MirrorHeader ${LANG_FINNISH} "Lataussivun valinta"

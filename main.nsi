@@ -49,6 +49,7 @@ Var ScamState
 # Directory Page
 !define MUI_DIRECTORYPAGE_TEXT_TOP $(DirectoryTitle)
 !define MUI_DIRECTORYPAGE_TEXT_DESTINATION $(DirectoryText)
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE DirPageLeave
 !insertmacro MUI_PAGE_DIRECTORY
 
 # Mirror selection
@@ -83,6 +84,14 @@ Var CheckDesktop
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchETS2LA
 
 !insertmacro MUI_PAGE_FINISH
+
+# Block if directory not empty
+Function DirPageLeave
+    IfFileExists "$INSTDIR\*.*" 0 dirEmpty
+        MessageBox MB_ICONSTOP|MB_OK $(DirectoryNotEmpty)
+        Abort
+    dirEmpty:
+FunctionEnd
 
 # Mirror page def
 Function SelectMirrorPage

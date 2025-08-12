@@ -20,6 +20,7 @@ LangString ScamWarningNotChecked ${LANG_SIMPCHINESE} "请勾选此项，确认�
 # Directory
 LangString DirectoryTitle ${LANG_SIMPCHINESE} "请选择您希望安装 ETS2LA 的文件夹。请注意，安装完成后 ETS2LA 不能移动。$\r$\n$\r$\n请点击“下一步”继续。"
 LangString DirectoryText ${LANG_SIMPCHINESE} "选择目标文件夹"
+LangString DirectoryNotEmpty ${LANG_SIMPCHINESE} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
 
 # Mirror Selection
 LangString MirrorHeader ${LANG_SIMPCHINESE} "镜像站点选择"

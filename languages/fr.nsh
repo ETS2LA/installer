@@ -21,6 +21,7 @@ LangString ScamWarningNotChecked ${LANG_FRENCH} "Vous devez confirmer que vous c
 # Directory
 LangString DirectoryTitle ${LANG_FRENCH} "Veuillez sélectionner le dossier d'installation de ETS2LA. Veuillez noter que ETS2LA ne peut pas être déplacé après installation.$\r$\n$\r$\nCliquez sur Suivant pour continuer."
 LangString DirectoryText ${LANG_FRENCH} "Sélectionnez le dossier cible."
+LangString DirectoryNotEmpty ${LANG_FRENCH} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
 
 # Mirror Selection
 LangString MirrorHeader ${LANG_FRENCH} "Choix de la source"

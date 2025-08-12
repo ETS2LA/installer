@@ -21,6 +21,7 @@ LangString ScamWarningNotChecked ${LANG_HUNGARIAN} "A négyzet bejelölésével 
 # Directory
 LangString DirectoryTitle ${LANG_HUNGARIAN} "Kérjük, válassza ki azt a mappát, ahová az ETS2LA-t telepíteni szeretné. Kérjük, vegye figyelembe, hogy az ETS2LA a telepítés után nem helyezhető át.$\r$\n$\r$\nKattintson a Tovább gombra a folytatáshoz."
 LangString DirectoryText ${LANG_HUNGARIAN} "Válassza ki az ETS2LA telepítési helyét."
+LangString DirectoryNotEmpty ${LANG_HUNGARIAN} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
 
 # Mirror Selection
 LangString MirrorHeader ${LANG_HUNGARIAN} "Terjesztő Kiválasztása"

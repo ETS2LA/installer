@@ -20,6 +20,7 @@ LangString ScamWarningNotChecked ${LANG_GERMAN} "Bitte bestätige durch Anhaken,
 # Installationsverzeichnis
 LangString DirectoryTitle ${LANG_GERMAN} "Wähle den Ordner, in dem ETS2LA installiert werden soll. Wichtig: Nach der Installation kann ETS2LA nicht verschoben werden.$\r$\n$\r$\nKlicke auf Weiter, um fortzufahren."
 LangString DirectoryText ${LANG_GERMAN} "Zielordner auswählen"
+LangString DirectoryNotEmpty ${LANG_GERMAN} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
 
 # Mirror-Auswahl
 LangString MirrorHeader ${LANG_GERMAN} "Download-Quelle wählen"

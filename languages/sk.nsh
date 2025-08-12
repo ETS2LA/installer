@@ -16,6 +16,7 @@ LangString ScamWarningNotChecked ${LANG_SLOVAK} "Začiarknutím políčka musít
 
 LangString DirectoryTitle ${LANG_SLOVAK} "Prosím vyberte priečinok, do ktorého chcete nainštalovať ETS2LA. Vezmite prosím na vedomie, že ETS2LA nie je možné po inštalácii presunúť. $\r$\n$\r$\nPokračujte kliknutím na Ďalej."
 LangString DirectoryText ${LANG_SLOVAK} "Vyberte Cieľový priečinok"
+LangString DirectoryNotEmpty ${LANG_SLOVAK} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
 
 LangString MirrorHeader ${LANG_SLOVAK} "Spôsob inštalácie"
 LangString MirrorHeaderDescription ${LANG_SLOVAK} "Vyberte server na stiahnuťie ETS2LA súborou."

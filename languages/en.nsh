@@ -21,6 +21,7 @@ LangString ScamWarningNotChecked ${LANG_ENGLISH} "You must acknowledge that you 
 # Directory
 LangString DirectoryTitle ${LANG_ENGLISH} "Please select the folder where you want to install ETS2LA. Please take note that ETS2LA cannot be moved after installation.$\r$\n$\r$\nClick Next to continue."
 LangString DirectoryText ${LANG_ENGLISH} "Select Destination Folder"
+LangString DirectoryNotEmpty ${LANG_ENGLISH} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
 
 # Mirror Selection
 LangString MirrorHeader ${LANG_ENGLISH} "Mirror Selection"
