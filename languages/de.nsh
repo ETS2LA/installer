@@ -12,7 +12,7 @@ LangString LicenseText ${LANG_GERMAN} "Lies dir bitte die folgende Lizenzvereinb
 
 # Betrugshinweis
 LangString ScamWarningHeader ${LANG_GERMAN} "Wichtiger Hinweis"
-LangString ScamWarningHeaderDescription ${LANG_GERMAN} "Wenn du für ETS2LA bezahlt hast, wurdest du abgezockt."
+LangString ScamWarningHeaderDescription ${LANG_GERMAN} "Wenn du für ETS2LA bezahlt hast, wurdest du vermutlich abgezockt."
 LangString ScamWarningTitle ${LANG_GERMAN} "Wichtiger Hinweis: Diese Software ist komplett kostenlos.$\r$\n$\r$\nETS2LA ist ein Open-Source-Projekt und wird kostenlos verteilt. Wenn du dafür bezahlt hast, wurdest du leider reingelegt."
 LangString ScamWarningCheckbox ${LANG_GERMAN} "Ich habe verstanden, dass ich betrogen wurde, falls ich für diesen Installer gezahlt habe."
 LangString ScamWarningNotChecked ${LANG_GERMAN} "Bitte bestätige durch Anhaken, dass du verstanden hast, dass die Software kostenlos ist."
@@ -20,7 +20,7 @@ LangString ScamWarningNotChecked ${LANG_GERMAN} "Bitte bestätige durch Anhaken,
 # Installationsverzeichnis
 LangString DirectoryTitle ${LANG_GERMAN} "Wähle den Ordner, in dem ETS2LA installiert werden soll. Wichtig: Nach der Installation kann ETS2LA nicht verschoben werden.$\r$\n$\r$\nKlicke auf Weiter, um fortzufahren."
 LangString DirectoryText ${LANG_GERMAN} "Zielordner auswählen"
-LangString DirectoryNotEmpty ${LANG_GERMAN} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
+LangString DirectoryNotEmpty ${LANG_GERMAN} "Das ausgewählte Verzeichnis ist nicht leer. Bitte wähle ein leeres Verzeichnis aus oder lösche das Verzeichnis, in das du gerade installieren möchtest."
 
 # Mirror-Auswahl
 LangString MirrorHeader ${LANG_GERMAN} "Download-Quelle wählen"
@@ -45,7 +45,7 @@ LangString GitCloneSuccess ${LANG_GERMAN} "Dateien erfolgreich heruntergeladen."
 LangString IncompleteRepo ${LANG_GERMAN} "Das Repository ist unvollständig. Versuche es erneut oder wähle einen anderen Mirror."
 
 LangString PythonRequirements ${LANG_GERMAN} "Python-Abhängigkeiten werden installiert..."
-LangString PythonTakesLong ${LANG_GERMAN} "Das kann etwas dauern, bis zu ~30 Minuten... also Geduld haben, es läuft!"
+LangString PythonTakesLong ${LANG_GERMAN} "Das kann etwas dauern, bis zu ~30 Minuten... bitte habe etwas Geduld!"
 
 # Verknüpfungen
 LangString ShortcutHeader ${LANG_GERMAN} "Verknüpfungen erstellen"
