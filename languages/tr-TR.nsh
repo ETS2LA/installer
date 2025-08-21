@@ -21,7 +21,7 @@ LangString ScamWarningNotChecked ${LANG_TURKISH} "Kutuyu işaretleyerek bu yazı
 # Directory
 LangString DirectoryTitle ${LANG_TURKISH} "Lütfen ETS2LA'yı yüklemek istediğiniz klasörü seçin. Lütfen ETS2LA'nın kurulumdan sonra taşınamayacağını unutmayın.$\r$\n$\r$\nDevam etmek için İleri'ye tıklayın."
 LangString DirectoryText ${LANG_TURKISH} "Hedef Klasörü Seçin"
-LangString DirectoryNotEmpty ${LANG_TURKISH} "The selected directory is not empty. Please choose an empty directory or clear the one you are trying to install to now."
+LangString DirectoryNotEmpty ${LANG_TURKISH} "Seçilen dizin boş değil. Lütfen boş bir dizin seçin veya şu anda yüklemeyi denediğiniz dizini temizleyin."
 
 # Mirror Selection
 LangString MirrorHeader ${LANG_TURKISH} "Sunucu Seçimi"
@@ -59,4 +59,5 @@ LangString CreateDesktopShortcut ${LANG_TURKISH} "Masaüstü Kısayolu Oluştur"
 LangString FinishTitle ${LANG_TURKISH} "Kurulum Tamamlandı"
 LangString FinishText ${LANG_TURKISH} "ETS2LA kurulumu tamamlanmıştır. Artık uygulamayı başlatabilirsiniz."
 LangString LaunchText ${LANG_TURKISH} "ETS2LA'yı başlat"
+
 LangString WebsiteText ${LANG_TURKISH} "ETS2LA Web Sitesini Ziyaret Edin"
