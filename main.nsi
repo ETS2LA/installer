@@ -11,6 +11,7 @@ InstallDir "C:\ETS2LA"
 !define GITLAB_URL "https://gitlab.com/ETS2LA/ETS2LA"
 !define GITHUB_URL "https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist.git"
 !define SOURCEFORGE_URL "https://git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
+!define CNB_URL "https://cnb.cool/ETS2LA-CN/Euro-Truck-Simulator-2-Lane-Assist.git"
 
 !define MIRROR_NAME "Aliyun PyPi Mirror"
 !define MIRROR_URL "https://mirrors.aliyun.com/pypi/simple/"
@@ -59,6 +60,7 @@ Var PyPi
 Var RadioGitLab
 Var RadioGitHub
 Var RadioSourceForge
+Var RadioCNB
 Var PyPiMirrorSelection
 
 # Shortcuts
@@ -113,8 +115,10 @@ Function SelectMirrorPage
     Pop $RadioGitHub
     ${NSD_CreateRadioButton} 0 60u 100% 12u "SourceForge"
     Pop $RadioSourceForge
+    ${NSD_CreateRadioButton} 0 75u 100% 12u "CNB"
+    Pop $RadioCNB
     # Toggle to enable/disable Aliyun mirror
-    ${NSD_CreateCheckBox} 0 80u 100% 12u "${MIRROR_NAME}"
+    ${NSD_CreateCheckBox} 0 95u 100% 12u "${MIRROR_NAME}"
     Pop $PyPiMirrorSelection
 
     # Set default selection (GitLab)
@@ -136,6 +140,11 @@ Function SelectMirrorPageLeave
             ${NSD_GetState} $RadioSourceForge $0
             ${If} $0 == ${BST_CHECKED}
                 StrCpy $MirrorSelection "SourceForge"
+            ${Else}
+                ${NSD_GetState} $RadioCNB $0
+                ${If} $0 == ${BST_CHECKED}
+                    StrCpy $MirrorSelection "CNB"
+                ${EndIf}
             ${EndIf}
         ${EndIf}
     ${EndIf}
@@ -260,6 +269,8 @@ Section "Download" SEC03
         nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .'
     ${ElseIf} $MirrorSelection == "SourceForge"
         nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .'
+    ${ElseIf} $MirrorSelection == "CNB"
+        nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${CNB_URL} .'
     ${EndIf}
 
     # Check if git clone was successful
@@ -279,8 +290,14 @@ Section "Download" SEC03
                 nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
                 Pop $0
                 ${If} $0 != 0
-                    MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
-                    Abort $(InstallationAborted)
+                    DetailPrint $(TryingAnotherMirror)
+                    DetailPrint "CNB"
+                    nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${CNB_URL} .' $0
+                    Pop $0
+                    ${If} $0 != 0
+                        MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
+                        Abort $(InstallationAborted)
+                    ${EndIf}
                 ${EndIf}
             ${EndIf}
         ${ElseIf} $MirrorSelection == "GitHub"
@@ -294,8 +311,14 @@ Section "Download" SEC03
                 nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${SOURCEFORGE_URL} .' $0
                 Pop $0
                 ${If} $0 != 0
-                    MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
-                    Abort $(InstallationAborted)
+                    DetailPrint $(TryingAnotherMirror)
+                    DetailPrint "CNB"
+                    nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${CNB_URL} .' $0
+                    Pop $0
+                    ${If} $0 != 0
+                        MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
+                        Abort $(InstallationAborted)
+                    ${EndIf}
                 ${EndIf}
             ${EndIf}
         ${ElseIf} $MirrorSelection == "SourceForge"
@@ -309,8 +332,14 @@ Section "Download" SEC03
                 nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${GITHUB_URL} .' $0
                 Pop $0
                 ${If} $0 != 0
-                    MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
-                    Abort $(InstallationAborted)
+                    DetailPrint $(TryingAnotherMirror)
+                    DetailPrint "CNB"
+                    nsExec::ExecToLog '"$INSTDIR\system\git\bin\git.exe" clone --quiet --depth=20 --branch=${BRANCH} --single-branch ${CNB_URL} .' $0
+                    Pop $0
+                    ${If} $0 != 0
+                        MessageBox MB_ICONSTOP|MB_OK $(AllMirrorsFailed)
+                        Abort $(InstallationAborted)
+                    ${EndIf}
                 ${EndIf}
             ${EndIf}
         ${EndIf}
