@@ -13,8 +13,10 @@ InstallDir "C:\ETS2LA"
 !define SOURCEFORGE_URL "https://git.code.sf.net/p/eurotrucksimulator2-laneassist/code"
 !define CNB_URL "https://cnb.cool/ETS2LA-CN/Euro-Truck-Simulator-2-Lane-Assist.git"
 
-!define MIRROR_NAME "Aliyun PyPi Mirror"
-!define MIRROR_URL "https://mirrors.aliyun.com/pypi/simple/"
+!define MIRROR_NAME_ALIYUN "Aliyun PyPi Mirror"
+!define MIRROR_URL_ALIYUN "https://mirrors.aliyun.com/pypi/simple/"
+!define MIRROR_NAME_USTC "USTC PyPi Mirror"
+!define MIRROR_URL_USTC "https://mirrors.ustc.edu.cn/pypi/simple/"
 
 # Installer Information
 Name "ETS2LA"
@@ -117,9 +119,25 @@ Function SelectMirrorPage
     Pop $RadioSourceForge
     ${NSD_CreateRadioButton} 0 75u 100% 12u "CNB"
     Pop $RadioCNB
+    
+    # PyPI mirror options
+    ${NSD_CreateLabel} 0 95u 100% 12u "PyPI Mirror:"
+    Pop $0
+    
     # Toggle to enable/disable Aliyun mirror
-    ${NSD_CreateCheckBox} 0 95u 100% 12u "${MIRROR_NAME}"
+    ${NSD_CreateRadioButton} 10u 110u 100% 12u "${MIRROR_NAME_ALIYUN}"
     Pop $PyPiMirrorSelection
+    
+    # Toggle to enable/disable USTC mirror
+    ${NSD_CreateRadioButton} 10u 125u 100% 12u "${MIRROR_NAME_USTC}"
+    Pop $PyPiUSTCMirrorSelection
+    
+    # No mirror option
+    ${NSD_CreateRadioButton} 10u 140u 100% 12u "No Mirror (Default PyPI)"
+    Pop $PyPiNoMirrorSelection
+    
+    # Set default selection (No Mirror)
+    ${NSD_SetState} $PyPiNoMirrorSelection ${BST_CHECKED}
 
     # Set default selection (GitLab)
     ${NSD_SetState} $RadioGitLab ${BST_CHECKED}
@@ -151,9 +169,14 @@ Function SelectMirrorPageLeave
 
     ${NSD_GetState} $PyPiMirrorSelection $0
     ${If} $0 == ${BST_CHECKED}
-        StrCpy $PyPi "Mirror"
+        StrCpy $PyPi "AliyunMirror"
     ${Else}
-        StrCpy $PyPi "Pypi"
+        ${NSD_GetState} $PyPiUSTCMirrorSelection $0
+        ${If} $0 == ${BST_CHECKED}
+            StrCpy $PyPi "USTCMirror"
+        ${Else}
+            StrCpy $PyPi "Pypi"
+        ${EndIf}
     ${EndIf}
 FunctionEnd
 
@@ -362,12 +385,19 @@ Section "Download" SEC03
         DetailPrint $(PythonTakesLong)
         nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
 
-    ${ElseIf} $PyPi == "Mirror"
+    ${ElseIf} $PyPi == "AliyunMirror"
 
         DetailPrint $(PythonRequirements)
-        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir wheel setuptools poetry requests'
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL_ALIYUN} --no-cache-dir wheel setuptools poetry requests'
         DetailPrint $(PythonTakesLong)
-        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL_ALIYUN} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
+
+    ${ElseIf} $PyPi == "USTCMirror"
+
+        DetailPrint $(PythonRequirements)
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL_USTC} --no-cache-dir wheel setuptools poetry requests'
+        DetailPrint $(PythonTakesLong)
+        nsExec::ExecToLog '"$INSTDIR\system\python\python.exe" -m pip install --verbose --no-warn-script-location --index-url ${MIRROR_URL_USTC} --no-cache-dir -r "$INSTDIR\app\requirements.txt"'
 
     ${EndIf}
 SectionEnd
