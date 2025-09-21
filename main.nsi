@@ -64,6 +64,8 @@ Var RadioGitHub
 Var RadioSourceForge
 Var RadioCNB
 Var PyPiMirrorSelection
+Var PyPiUSTCMirrorSelection
+Var PyPiNoMirrorSelection
 
 # Shortcuts
 Page custom ShortcutSelectionPage ShortcutSelectionPageLeave
