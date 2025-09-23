@@ -25,7 +25,7 @@ LangString DirectoryNotEmpty ${LANG_SIMPCHINESE} "所选目录包含其它文件
 # Mirror Selection
 LangString MirrorHeader ${LANG_SIMPCHINESE} "镜像站点选择"
 LangString MirrorHeaderDescription ${LANG_SIMPCHINESE} "请选择用于下载 ETS2LA 文件的镜像站点。"
-LangString MirrorTitle ${LANG_SIMPCHINESE} "请选择用于下载 ETS2LA 文件的镜像站点。一般选择 GitLab/CNB 即可，GitHub 更新更快。如在中国大陆使用，请选择 除 Default（pypi.org）的镜像。"
+LangString MirrorTitle ${LANG_SIMPCHINESE} "请选择用于下载 ETS2LA 文件的镜像站点。一般选择 GitLab/CNB 即可，GitHub 更新更快。如在中国大陆使用，请选择除 Default（pypi.org）的镜像。"
 
 # Install Messages
 LangString InstallingPip ${LANG_SIMPCHINESE} "正在安装 pip..."
