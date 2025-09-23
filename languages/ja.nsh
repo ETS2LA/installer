@@ -1,4 +1,4 @@
-LangString BrandingText ${LANG_JAPANESE} "ets2la.comでもっと見る"
+﻿LangString BrandingText ${LANG_JAPANESE} "ets2la.comでもっと見る"
 
 LangString InstallerLanguage ${LANG_JAPANESE} "インストーラーの言語"
 LangString InstallerLanguageText ${LANG_JAPANESE} "インストーラーの言語を選択してください"
