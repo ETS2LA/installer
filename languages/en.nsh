@@ -26,7 +26,7 @@ LangString DirectoryNotEmpty ${LANG_ENGLISH} "The selected directory is not empt
 # Mirror Selection
 LangString MirrorHeader ${LANG_ENGLISH} "Mirror Selection"
 LangString MirrorHeaderDescription ${LANG_ENGLISH} "Select a mirror to download the ETS2LA files from."
-LangString MirrorTitle ${LANG_ENGLISH} "Usually GitLab is fine, GitHub gets faster updates. The PyPi mirror needs to be used in mainland China.""
+LangString MirrorTitle ${LANG_ENGLISH} "Usually GitLab is fine, GitHub gets faster updates. The PyPi mirror needs to be used in mainland China."
 
 # Install Messages
 LangString InstallingPip ${LANG_ENGLISH} "Installing pip..."
