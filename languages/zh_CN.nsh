@@ -5,16 +5,16 @@ LangString InstallerLanguageText ${LANG_SIMPCHINESE} "请选择安装程序的�
 
 # Welcome
 LangString WelcomeTitle ${LANG_SIMPCHINESE} "欢迎使用 ETS2LA 安装向导"
-LangString WelcomeText ${LANG_SIMPCHINESE} "本向导将引导您完成 ETS2LA 的安装过程。$\r$\n$\r$\n单击“下一步”继续。"
+LangString WelcomeText ${LANG_SIMPCHINESE} "本向导将引导您完成 ETS2LA 的安装。$\r$\n$\r$\n单击“下一步”继续。"
 
 # License
-LangString LicenseText ${LANG_SIMPCHINESE} "请仔细阅读以上许可协议。$\r$\n$\r$\n若同意协议条款，请单击“下一步”继续。"
+LangString LicenseText ${LANG_SIMPCHINESE} "请仔细阅读以上许可协议。$\r$\n$\r$\n若同意协议条款，请单击“我接受”以继续。"
 
 # Scam
 LangString ScamWarningHeader ${LANG_SIMPCHINESE} "防诈骗提示"
-LangString ScamWarningHeaderDescription ${LANG_SIMPCHINESE} "如果您曾为 ETS2LA 付费，则已遭受诈骗。"
-LangString ScamWarningTitle ${LANG_SIMPCHINESE} "重要提示：本软件完全免费。$\r$\n$\r$\nETS2LA 是一款开源项目，任何人都可免费获取。若您为获取本安装程序或软件支付了费用，建议您通过举报等方式要求商家返还财产。"
-LangString ScamWarningCheckbox ${LANG_SIMPCHINESE} "我已知晓，若曾为此安装程序付费，即表示我已受骗。"
+LangString ScamWarningHeaderDescription ${LANG_SIMPCHINESE} "如果您为 ETS2LA 安装程序或软件付费，则已遭受诈骗。"
+LangString ScamWarningTitle ${LANG_SIMPCHINESE} "重要提示：本软件完全免费。$\r$\n$\r$\nETS2LA 是一款开源项目，任何人都可免费获取。若您获取本安装程序或软件中支付了费用，建议您通过举报等方式要求商家返还财产。"
+LangString ScamWarningCheckbox ${LANG_SIMPCHINESE} "我已知晓，我若为此安装程序付费，即表示我已受骗。"
 LangString ScamWarningNotChecked ${LANG_SIMPCHINESE} "请勾选此框，确认您知晓本软件为免费软件。"
 
 # Directory
@@ -25,11 +25,11 @@ LangString DirectoryNotEmpty ${LANG_SIMPCHINESE} "所选目录包含其它文件
 # Mirror Selection
 LangString MirrorHeader ${LANG_SIMPCHINESE} "镜像站点选择"
 LangString MirrorHeaderDescription ${LANG_SIMPCHINESE} "请选择用于下载 ETS2LA 文件的镜像站点。"
-LangString MirrorTitle ${LANG_SIMPCHINESE} "请选择用于下载 ETS2LA 文件的镜像站点。通常选择 GitLab 即可，GitHub 更新更快。如在中国大陆使用，请勾选 PyPi 镜像。"
+LangString MirrorTitle ${LANG_SIMPCHINESE} "请选择用于下载 ETS2LA 文件的镜像站点。一般选择 GitLab/CNB 即可，GitHub 更新更快。如在中国大陆使用，请选择 除 Default（pypi.org）的镜像。"
 
 # Install Messages
 LangString InstallingPip ${LANG_SIMPCHINESE} "正在安装 pip..."
-LangString PipInstallError ${LANG_SIMPCHINESE} "pip 安装失败。请检查您的网络连接并重试。"
+LangString PipInstallError ${LANG_SIMPCHINESE} "pip 安装失败。请检查您的网络连接后重试。"
 
 LangString InstallingGit ${LANG_SIMPCHINESE} "正在解压并安装 Git..."
 LangString Cloning ${LANG_SIMPCHINESE} "正在从以下地址克隆 ETS2LA 仓库："

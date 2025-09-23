@@ -26,7 +26,7 @@ LangString DirectoryNotEmpty ${LANG_TRADCHINESE} "選取的目錄不是空的。
 # Mirror Selection
 LangString MirrorHeader ${LANG_TRADCHINESE} "來源選擇"
 LangString MirrorHeaderDescription ${LANG_TRADCHINESE} "請選擇下載 ETS2LA 檔案的來源。"
-LangString MirrorTitle ${LANG_TRADCHINESE} "請選擇下載 ETS2LA 檔案的來源。一般建議使用 GitLab，GitHub 可較快取得最新更新。如於中國大陸，請使用 PyPi 鏡像。"
+LangString MirrorTitle ${LANG_TRADCHINESE} "請選擇下載 ETS2LA 檔案的來源。一般選擇 GitLab，GitHub 即可。如在中國大陸使用，請選擇 除 Default（pypi.org）的鏡像。。"
 
 # Install Messages
 LangString InstallingPip ${LANG_TRADCHINESE} "正在安裝 pip……"
