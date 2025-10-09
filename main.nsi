@@ -125,7 +125,7 @@ Function SelectMirrorPage
     ${NSD_CB_AddString} $PyPiMirrorSelection "Default (pypi.org)"
     ${NSD_CB_AddString} $PyPiMirrorSelection "Aliyun"
     ${NSD_CB_AddString} $PyPiMirrorSelection "USTC (China)"
-    SendMessage $PyPiMirrorSelection ${CB_SETCURSEL} 2 0 # Default to USTC
+    SendMessage $PyPiMirrorSelection ${CB_SETCURSEL} 0 0
 
     # Set default selection (GitLab)
     ${NSD_SetState} $RadioGitLab ${BST_CHECKED}
