@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This repository will be **DEPRECATED** once ETS2LA C# releases. We are moving to [Velopack](https://velopack.io) as our installer. This will allow for way more features on both our, and the end user's side. **This installer will continue to work for as long as the Python version is up, and if any issues are discovered we will be fixing them.**
+
 ## ETS2LA Installer
 This repository contains the installer for ETS2LA. You can find the source code for the main application in the [ETS2LA repository](https://github.com/ETS2LA/Euro-Truck-Simulator-2-Lane-Assist).
 
